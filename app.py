@@ -286,7 +286,7 @@ with col_text4:
 
 with col_img4:
     st.write("")
-    st.image("čez.jpeg",
+    st.image("cez.jpeg",
              caption="ČEZ", use_container_width=True)
 
 st.markdown("### 7️⃣ Rozpad vertikální integrace (Unbundling)")
