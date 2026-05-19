@@ -273,6 +273,25 @@ html, body {
   margin-bottom: 64px;
   align-items: end;
 }
+.era-head--with-img {
+  grid-template-columns: auto 1fr 320px;
+  align-items: end;
+}
+.era-head--with-img .era-head-img {
+  margin: 0;
+  align-self: end;
+}
+.era-head--with-img .era-head-img img {
+  aspect-ratio: 4/3;
+  object-fit: cover;
+}
+@media (max-width: 980px) {
+  .era-head--with-img { grid-template-columns: auto 1fr; }
+  .era-head--with-img .era-head-img {
+    grid-column: 1 / -1;
+    max-width: 520px;
+  }
+}
 .era-index {
   font-family: 'Playfair Display', serif;
   font-style: italic;
@@ -347,7 +366,7 @@ html, body {
   text-wrap: pretty;
 }
 .era-prose p { margin: 0 0 20px; }
-.era-prose p:first-child::first-letter {
+.era-prose p:first-of-type::first-letter {
   font-family: 'Playfair Display', serif;
   font-size: 3.2em;
   line-height: 0.95;
@@ -357,6 +376,103 @@ html, body {
   font-style: italic;
 }
 .era-prose b, .era-prose strong { color: var(--ink); font-weight: 600; }
+.era-prose .prose-sub {
+  font-family: 'Playfair Display', Georgia, serif;
+  font-weight: 500;
+  font-style: italic;
+  font-size: 1.25em;
+  color: var(--ink);
+  margin: 36px 0 14px;
+  letter-spacing: -0.005em;
+  line-height: 1.3;
+}
+.era-prose .prose-sub:first-of-type { margin-top: 8px; }
+.era-prose .prose-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 24px 0 28px;
+  font-size: 13.5px;
+  font-family: 'Inter', system-ui, sans-serif;
+  text-align: left;
+}
+.era-prose .prose-table caption {
+  caption-side: top;
+  text-align: left;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--ink-dim);
+  padding-bottom: 10px;
+}
+.era-prose .prose-table th {
+  background: var(--bg-3);
+  color: var(--ink);
+  font-weight: 600;
+  padding: 10px 12px;
+  border-bottom: 1px solid var(--rule);
+  vertical-align: top;
+  white-space: nowrap;
+}
+.era-prose .prose-table td {
+  padding: 9px 12px;
+  border-bottom: 1px solid color-mix(in oklab, var(--rule) 60%, transparent);
+  color: var(--ink-dim);
+  vertical-align: top;
+}
+.era-prose .prose-table tr:last-child td { border-bottom: 1px solid var(--rule); }
+.era-prose .prose-table tr:hover td { background: color-mix(in oklab, var(--bg-3) 50%, transparent); }
+.era-prose .prose-table .num { font-family: 'JetBrains Mono', monospace; font-size: 12.5px; color: var(--ink); }
+.era-prose .figure-todo {
+  margin: 24px 0;
+  padding: 14px 18px;
+  border: 1px dashed var(--rule);
+  border-radius: 4px;
+  background: color-mix(in oklab, var(--bg-3) 40%, transparent);
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 12px;
+  letter-spacing: 0.06em;
+  color: var(--ink-faint);
+}
+.era-prose .prose-figure {
+  margin: 28px 0;
+  background: var(--bg-2);
+  border: 1px solid var(--rule);
+  border-radius: 6px;
+  overflow: hidden;
+}
+.era-prose .prose-figure-head {
+  display: flex; align-items: baseline; justify-content: space-between;
+  padding: 12px 18px;
+  border-bottom: 1px solid var(--rule);
+  background: color-mix(in oklab, var(--bg-3) 50%, transparent);
+}
+.era-prose .prose-figure-head .label {
+  font-size: 10px; letter-spacing: 0.18em;
+}
+.era-prose .prose-figure-head .title {
+  font-family: 'Playfair Display', Georgia, serif;
+  font-style: italic;
+  font-size: 14px; color: var(--ink);
+}
+.era-prose .prose-figure svg.transmission-map {
+  display: block; width: 100%; height: auto; padding: 18px 12px 12px;
+}
+.era-prose .prose-figure-img {
+  display: block; width: 100%; height: auto;
+  background: oklch(0.94 0.005 80);
+}
+.era-prose .prose-figure .legend {
+  display: flex; flex-wrap: wrap; gap: 18px;
+  padding: 10px 18px 14px;
+  border-top: 1px dashed var(--rule);
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  color: var(--ink-dim);
+  letter-spacing: 0.04em;
+}
+.era-prose .prose-figure .legend-item { display: flex; align-items: center; gap: 8px; }
+.era-prose .prose-figure .legend-swatch { display: inline-block; width: 22px; height: 3px; }
 
 /* ==================== STAGE CARD ==================== */
 .stage {
@@ -780,15 +896,21 @@ function Callout({ kind='info', children }) {
 }
 
 // EraHead — the big title block at the top of each section
-function EraHead({ index, eraKey, dates, title, kicker }) {
+function EraHead({ index, eraKey, dates, title, kicker, img }) {
   return (
-    <div className="era-head">
+    <div className={'era-head' + (img ? ' era-head--with-img' : '')}>
       <div className="era-index">{index}</div>
       <div className="era-meta">
         <div className="label">{eraKey} · {dates}</div>
         <h2 className="era-title">{title}</h2>
         <div className="era-kicker">{kicker}</div>
       </div>
+      {img && (
+        <figure className="era-head-img imgframe">
+          <img src={img.src} alt={img.alt || ''} />
+          {img.caption && <figcaption>{img.caption}</figcaption>}
+        </figure>
+      )}
     </div>
   );
 }
@@ -1007,17 +1129,24 @@ function Era1() {
             <blockquote className="era-pullquote">
               „Svítání nové doby, v níž slunce zapadá, ale Praha nezhasíná."
             </blockquote>
-            <p>Počátky elektrifikace v Praze spadají do posledních dvou dekád 19. století a úzce souvisejí s nástupem <b>druhé průmyslové revoluce</b>. Elektrická energie byla zpočátku využívána především pro veřejné osvětlení a demonstrační projekty, které měly technologický i symbolický význam — město, v němž se rozsvěcuje elektřina, deklarovalo, že patří do moderní Evropy. Plynové lampy, dosud dominantní, byly méně spolehlivé, hůře ovladatelné a představovaly reálné požární riziko; stabilní elektrické světlo proto proměnilo nejen ulice, ale i každodenní režim obyvatel — prodloužilo provozní dobu dílen, divadel, kaváren.<sup>[1]</sup></p>
-            <p><b>František Křižík</b> (1847–1941), zvaný „český Edison", získal v roce 1878 patent na zdokonalenou diferenciální obloukovou lampu, kterou předvedl na <b>pařížské Mezinárodní elektrotechnické výstavě 1881</b> a získal za ni zlatou medaili. V konkurenci Edisona, Siemense a Browna zaujal jednoduchostí regulace — jeho lampa dokázala sama udržovat konstantní vzdálenost uhlíků. V Praze rozsvítil první obloukovky <b>19. listopadu 1881 na Staroměstském náměstí</b> a postupně na Ferdinandově třídě (dnešní Národní) — šlo o první stálé elektrické osvětlení ve střední Evropě. Dobový tisk popsal událost jako „svítání nové doby, v níž slunce zapadá, ale Praha nezhasíná".<sup>[1][2]</sup></p>
-            <p>Stejnosměrné soustavy, inspirované koncepcí <b>Thomase Edisona</b>, byly vhodné pro krátké vzdálenosti — ztráty v měděném vodiči rostou s druhou mocninou proudu podle vztahu P<sub>z</sub> = R·I², takže nad 1–2 km se přenos ekonomicky nevyplatil. Proto každá čtvrť potřebovala vlastní malou elektrárnu — mapou Prahy kolem roku 1895 prochází rozsetá síť uhelných kotelen a parních strojů: <b>Žižkov (1889)</b>, <b>Karlín, Vršovice, Smíchov, Holešovice, Karlín-Invalidovna</b>. Proti tomu koncepce <b>Nikoly Tesly</b> a <b>George Westinghouse</b> — střídavý proud, jehož napětí lze transformátorem libovolně zvyšovat a snižovat — umožnila centrální zdroj daleko od spotřebiče a znamenala konec mikro-lokální výroby. Historicky se tento spor označuje jako <i>„válka proudů"</i> (War of Currents) a v Evropě skončil do konce 90. let 19. století ve prospěch AC.<sup>[2][3]</sup></p>
-            <p>Roku 1891 uspořádala Praha <b>Jubilejní zemskou výstavu</b> na Výstavišti v Holešovicích, kde Křižík postavil elektrickou tramvaj na Letné (první trvalá elektrická dráha na českém území, trasa Letná–Stromovka, 780 m) a efektní „světelnou fontánu", jejíž trysky synchronizované s obloukovými reflektory předběhly dobu o desetiletí. Zemská výstava byla pro Pražany první masivní zkušeností s elektřinou — přes <b>2,4 milionu návštěvníků</b> během 136 dnů — a položila kulturní základ pro přijetí elektrifikace jako věci veřejného zájmu, ne jen luxusu několika podniků.<sup>[2]</sup></p>
-            <p>V roce 1900 byla zprovozněna <b>Holešovická elektrárna</b> (projekt arch. Aloise Dlabače, strojní část Škoda–Kolben) jako první pražská centrální střídavá elektrárna — 3×1 000 kW parních turbín, třífázové napětí 3 kV, frekvence 42 Hz (tehdy ještě nesjednocena). Původně sloužila zejména pohonu elektrických tramvají, které v letech 1897–1908 nahradily koňku, a postupně převzala i městské osvětlení. Znamenala definitivní konec éry rozdrobené výroby a počátek jednotné pražské soustavy — město přešlo z průmyslového ostrova na koncept <i>síťově napájené metropole</i>.<sup>[3][4]</sup></p>
-            <p>Paralelně vznikaly <b>Elektrické podniky královského hlavního města Prahy</b> (1897), obecní komunální podnik, jehož úkolem bylo sjednotit výrobu, rozvod i provoz tramvají. Model „všeužitečné elektrárny" pod veřejnou správou se stal pro meziválečné období vzorem — v Praze byl uplatněn dříve než mnohde v západní Evropě a položil institucionální základ pozdější PRE.<sup>[4]</sup></p>
+            <h4 className="prose-sub">Počátky elektrického osvětlení v Praze</h4>
+            <p>Zavádění elektrické energie v Praze spadá do posledních dvou desetiletí 19. století a úzce souviselo s technologickým nástupem <b>druhé průmyslové revoluce</b>. V počáteční fázi sloužila elektřina primárně k provozu veřejného osvětlení a pro demonstrační technologické projekty. Tyto projekty, zahrnující dobové průmyslové a zemské výstavy či experimentální instalace, fungovaly jako mocné symboly modernity a národní prestiže. Jejich účelem nebyla pouze průmyslová propagace, ale také určitá forma technologické „pedagogiky", jež měla širší veřejnost zbavit obav a prakticky ji seznámit s možnostmi nového vynálezu. Elektřina představovala tak moderní alternativu k dosud dominantním plynovým lampám, které se vyznačovaly nižší spolehlivostí, složitější obsluhou a vyšším rizikem vzniku požáru. Zavedení stabilního elektrického světla následně umožnilo prodloužení provozní doby v dílnách, divadlech i dalších veřejných prostorech, čímž začalo postupně měnit každodenní rytmus obyvatel města.<sup>[1]</sup></p>
+
+            <h4 className="prose-sub">Přínos Františka Křižíka a první instalace</h4>
+            <p>Klíčovou osobností rané fáze pražské elektrifikace byl podnikatel <b>František Křižík</b> (1847–1941), který v roce 1878 získal patent na zdokonalenou diferenciální obloukovou lampu. Toto technické zdokonalení obloukovky, oceněné v roce 1881 zlatou medailí na <b>Mezinárodní elektrotechnické výstavě v Paříži</b>, se technologicky vyznačovalo inovativním mechanismem pro samočinné udržování konstantní vzdálenosti uhlíkových elektrod. K první instalaci stálého elektrického osvětlení ve střední Evropě došlo právě Křižíkovou zásluhou <b>19. listopadu 1881</b> v Praze na Staroměstském náměstí a nedlouho poté také na tehdejší Ferdinandově třídě (dnešní Národní).<sup>[2][3]</sup></p>
+            <p>Zásadní zlom ve společenském vnímání elektrické energie přinesla <b>Jubilejní výstava na holešovickém výstavišti v roce 1891</b>, jíž se zúčastnilo přes 2,4 milionu návštěvníků. Křižík zde demonstroval širší možnosti využití elektřiny: navrhl světelnou fontánu, osvětlení výstavních pavilonů, světelný reflektor na věži Výstavního pavilonu a zkonstruoval první trvalou elektrickou dráhu na českém území. Tato trať spojovala Letnou s výstavištěm a dosahovala délky 780 metrů. Výstava tak historicky přispěla k tomu, že elektřina začala být vnímána jako záležitost veřejného zájmu a infrastruktury.<sup>[2][3]</sup></p>
+
+            <h4 className="prose-sub">Od lokálních stejnosměrných zdrojů k jednotné střídavé síti</h4>
+            <p>V počátcích elektrifikace byly k přenosu využívány převážně <b>stejnosměrné soustavy</b>. Vzhledem k fyzikálním vlastnostem a narůstajícím ztrátám ve vodičích se přenos na vzdálenosti přesahující zhruba 2 kilometry stával ekonomicky a technicky nevýhodným. Tento limit vedl k budování sítě menších lokálních převážně uhelných elektráren, které vznikaly v jednotlivých pražských čtvrtích — například na <b>Žižkově (1889)</b>, v Karlíně, Vršovicích či na Smíchově. Koncem 19. století však v Evropě i v pražském prostředí postupně převládla koncepce <b>střídavého proudu</b>, která díky využití transformátorů umožňovala efektivní přenos energie z centrálních zdrojů na velké vzdálenosti.<sup>[1]</sup></p>
+
+            <h4 className="prose-sub">Centralizace a vznik Elektrických podniků</h4>
+            <p>Ústup od rozdrobené lokální výroby a přechod k síťové metropolitní koncepci představovalo zprovoznění <b>Holešovické elektrárny v roce 1900</b>. Šlo o první pražskou centrální elektrárnu na střídavý proud (třífázové napětí 3 kV, frekvence 42 Hz), jejíž strojní zařízení dodala společnost <b>Škoda — Elektrotechnická továrna, a.s. (EAS), Kolben Vysočany</b>. Původně byla vybudována pro potřeby napájení elektrických tramvají, avšak postupně převzala i dodávky pro celoměstské osvětlení a soukromý odběr.<sup>[1][2]</sup></p>
+            <p>Nezbytným předpokladem pro tuto integraci byl vznik <b>Elektrických podniků královského hlavního města Prahy v roce 1897</b>. Tento obecní komunální podnik sjednotil výrobu i rozvod elektřiny společně s provozem tramvajové dopravy pod jednotnou veřejnou správu. Model takzvané „všeužitečné elektrárny" vytvořil institucionální základ pro další, meziválečnou etapu rozvoje pražské energetiky.<sup>[1][2]</sup></p>
           </div>
 
           <EraSidebar>
             <div className="label" style={{marginBottom:6}}>Epocha I · v číslech</div>
-            <EraStat value="1881" label="První obloukovka na Ferdinandově tř." />
+            <EraStat value="1881" label="První obloukovky na Staroměstském n." />
             <EraStat value="3 kV" label="Napětí Holešovické el. (1900)" color="blue" />
             <EraStat value="2,4 M" label="Návštěvníků Jubilejní výstavy 1891" />
             <EraStat value="≈ 6" label="Lokálních elektráren v Praze 1900" color="blue" />
@@ -1042,15 +1171,16 @@ function Era1() {
 // --- Era1Map — slider přes roky 1880–1905, živá mapa instalací ---
 function Era1Map() {
   const [year, setYear] = useState(1885);
+  // Souřadnice odpovídají reálným pozicím na podkladové mapě Prahy (praha_mapa.png).
+  // labelPos: 'right' | 'left' | 'top' | 'bottom' — kam ukotvit popisek vůči bodu.
   const spots = [
-    { name: 'První Křižíkovy obloukovky', x: 30, y: 55, year: 1881, info: 'Ferdinandova třída', kind: 'lamp' },
-    { name: 'Obloukovky na Staroměstském n.', x: 46, y: 62, year: 1884, info: 'Veřejné osvětlení', kind: 'lamp' },
-    { name: 'První elektrárna Žižkov', x: 68, y: 70, year: 1889, info: 'Městská el. (DC)', kind: 'plant' },
-    { name: 'Křižíkova el. dráha Letná', x: 40, y: 28, year: 1891, info: 'První pražská tramvaj', kind: 'tram' },
-    { name: 'Jubilejní výstava', x: 38, y: 22, year: 1891, info: 'Elektrický pavilon', kind: 'event' },
-    { name: 'Elektrárna Vršovice', x: 76, y: 82, year: 1897, info: 'Lokální DC zdroj', kind: 'plant' },
-    { name: 'Holešovická elektrárna', x: 52, y: 14, year: 1900, info: 'První moderní AC', kind: 'bigplant' },
-    { name: 'Elektrárna Karlín', x: 58, y: 40, year: 1903, info: 'Průmyslová AC', kind: 'plant' },
+    { name: 'První Křižíkovy obloukovky', x: 47, y: 55, year: 1881, info: 'Ferdinandova třída (dnešní Národní)', kind: 'lamp',    labelPos: 'left'  },
+    { name: 'Obloukovky na Staroměstském n.', x: 51, y: 50, year: 1884, info: 'Veřejné osvětlení centra', kind: 'lamp',           labelPos: 'right' },
+    { name: 'První elektrárna Žižkov', x: 65, y: 58, year: 1889, info: 'Městská el. (DC)', kind: 'plant',                          labelPos: 'right' },
+    { name: 'Křižíkova el. dráha Letná', x: 47, y: 35, year: 1891, info: 'Letná–Stromovka, 780 m', kind: 'tram',                   labelPos: 'left'  },
+    { name: 'Jubilejní výstava', x: 56, y: 22, year: 1891, info: 'Výstaviště Holešovice', kind: 'event',                            labelPos: 'right' },
+    { name: 'Holešovická elektrárna', x: 52, y: 30, year: 1900, info: 'První moderní AC · 3 kV / 42 Hz', kind: 'bigplant',         labelPos: 'right' },
+    { name: 'Elektrárna Karlín', x: 60, y: 43, year: 1903, info: 'Průmyslová AC', kind: 'plant',                                   labelPos: 'right' },
   ];
   const active = spots.filter(s => s.year <= year);
 
@@ -1059,24 +1189,19 @@ function Era1Map() {
       right={<span className="chip"><span className="chip-dot" />Rok {year}</span>}>
       <StepHead step="02 · Geografie pionýrů" title="Posuvník = čas. Sleduj, jak se světlo šíří." />
 
-      <div style={{position:'relative', aspectRatio:'16/9', background:'oklch(0.18 0.015 260)', border:'1px solid var(--rule)', borderRadius:4, overflow:'hidden'}}>
-        {/* river */}
-        <svg viewBox="0 0 100 56" preserveAspectRatio="none" style={{position:'absolute', inset:0, width:'100%', height:'100%'}}>
-          <path d="M-2,8 Q20,22 30,30 T50,40 Q62,46 80,44 T102,48"
-            stroke="oklch(0.30 0.04 245)" strokeWidth="3.5" fill="none" opacity="0.6" />
-          {/* subtle street grid */}
-          <g stroke="oklch(0.22 0.01 260)" strokeWidth="0.1">
-            {Array.from({length:10}).map((_,i) => <line key={'h'+i} x1="0" y1={i*6} x2="100" y2={i*6} />)}
-            {Array.from({length:18}).map((_,i) => <line key={'v'+i} x1={i*6} y1="0" x2={i*6} y2="56" />)}
-          </g>
-        </svg>
+      <div style={{position:'relative', aspectRatio:'400/267', background:'#f0ece3', border:'1px solid var(--rule)', borderRadius:4, overflow:'hidden', maxWidth: 720, margin:'0 auto'}}>
+        {/* podkladová mapa Prahy (OpenStreetMap snapshot, natívne 400×267 — kontejner kapnutý kvůli ostrosti) */}
+        <img src="praha_mapa.png" alt="Mapa Prahy"
+          style={{position:'absolute', inset:0, width:'100%', height:'100%', objectFit:'cover', imageRendering:'auto', filter:'saturate(0.9) contrast(0.95)'}} />
 
-        {/* labels */}
-        <div style={{position:'absolute', left:'36%', top:'48%', fontFamily:'Playfair Display', fontStyle:'italic', fontSize:12, color:'var(--ink-faint)'}}>Vltava</div>
-        <div style={{position:'absolute', left:'42%', top:'68%', fontFamily:'JetBrains Mono', fontSize:10, color:'var(--ink-faint)', letterSpacing:'0.1em'}}>STARÉ MĚSTO</div>
-        <div style={{position:'absolute', left:'66%', top:'70%', fontFamily:'JetBrains Mono', fontSize:10, color:'var(--ink-faint)', letterSpacing:'0.1em'}}>ŽIŽKOV</div>
-        <div style={{position:'absolute', left:'52%', top:'20%', fontFamily:'JetBrains Mono', fontSize:10, color:'var(--ink-faint)', letterSpacing:'0.1em'}}>HOLEŠOVICE</div>
-        <div style={{position:'absolute', left:'38%', top:'32%', fontFamily:'JetBrains Mono', fontSize:10, color:'var(--ink-faint)', letterSpacing:'0.1em'}}>LETNÁ</div>
+        {/* lehké ztmavení pro lepší kontrast bodů */}
+        <div style={{position:'absolute', inset:0, background:'linear-gradient(180deg, rgba(0,0,0,0.05), rgba(0,0,0,0.18))'}} />
+
+        {/* kompas */}
+        <div style={{position:'absolute', right:14, top:10, fontFamily:'JetBrains Mono', fontSize:10, color:'#222', letterSpacing:'0.16em', textAlign:'center', background:'rgba(255,255,255,0.78)', padding:'4px 8px', borderRadius:3, border:'1px solid rgba(0,0,0,0.1)'}}>
+          <div style={{fontSize:13, fontWeight:700}}>N</div>
+          <div style={{width:1, height:14, background:'#444', margin:'2px auto 0'}}/>
+        </div>
 
         {/* spots */}
         {spots.map((s, i) => {
@@ -1094,12 +1219,29 @@ function Era1Map() {
                 transition: 'all 0.4s',
                 animation: justAppeared ? 'pulse 1.4s ease-out' : 'none',
               }} />
-              {isActive && (
-                <div style={{position:'absolute', left:14, top:-4, whiteSpace:'nowrap'}}>
-                  <div style={{fontFamily:'JetBrains Mono', fontSize:10, color:'var(--ink)', letterSpacing:'0.08em'}}>{s.year}</div>
-                  <div style={{fontFamily:'Inter', fontSize:12, color:'var(--ink-dim)'}}>{s.name}</div>
-                </div>
-              )}
+              {isActive && (() => {
+                const pos = s.labelPos || 'right';
+                const off = Math.max(10, size / 2 + 6);
+                const labelStyle = {
+                  position: 'absolute',
+                  whiteSpace: 'nowrap',
+                  background: 'rgba(255,255,255,0.94)',
+                  padding: '3px 8px',
+                  borderRadius: 3,
+                  border: '1px solid rgba(0,0,0,0.12)',
+                  boxShadow: '0 1px 3px rgba(0,0,0,0.18)',
+                };
+                if (pos === 'left')        { labelStyle.right = off;  labelStyle.top = -6; }
+                else if (pos === 'top')    { labelStyle.bottom = off; labelStyle.left = '50%'; labelStyle.transform = 'translateX(-50%)'; }
+                else if (pos === 'bottom') { labelStyle.top = off;    labelStyle.left = '50%'; labelStyle.transform = 'translateX(-50%)'; }
+                else                       { labelStyle.left = off;   labelStyle.top = -6; } // right (default)
+                return (
+                  <div style={labelStyle}>
+                    <div style={{fontFamily:'JetBrains Mono', fontSize:10, color:'#444', letterSpacing:'0.08em'}}>{s.year}</div>
+                    <div style={{fontFamily:'Inter', fontSize:12, color:'#1a1a1a', fontWeight:500}}>{s.name}</div>
+                  </div>
+                );
+              })()}
             </div>
           );
         })}
@@ -1354,23 +1496,15 @@ function Era2() {
     <section className="era" id="era-2" data-screen-label="02 Centralizace">
       <div className="era-inner">
         <EraHead index="II" eraKey="Epocha II" dates="1918 — 1945"
-          title="Jeden dispečer místo sta hrdinů"
-          kicker="Republika po první světové buduje. Desítky malých elektráren po Praze nahrazuje jedna velkokapacitní — Holešovická — a páteřní síť 22 kV. Poprvé lze říct větě: „Praha je napájená.“" />
+          title="Republika potřebuje páteř"
+          kicker="Republika po první světové buduje. Desítky malých elektráren po Praze nahrazuje jedna velkokapacitní — Holešovická — a páteřní síť 22 kV. Poprvé lze říct větě: „Praha je napájená.“"
+          img={{src: window.IMGS.hol_trznice, alt: "Holešovická tržnice", caption: "Holešovická tržnice · symbol meziválečné moderny"}} />
 
-        <div className="era-body" style={{marginBottom: 40}}>
-          <div>
-            <Stage title="Stavitel sítě · Meziválečná Praha" right={<span className="chip"><span className="chip-dot" />Hra</span>}>
-              <StepHead step="03 · Kabelomat" title="Propoj síť a vyzkoušej poruchu" />
-              <NetworkBuilder />
-            </Stage>
-          </div>
-
-          <div>
-            <figure className="imgframe" style={{margin:0}}>
-              <img src={window.IMGS.hol_trznice} alt="Holešovická tržnice" />
-              <figcaption>Holešovická tržnice · symbol meziválečné moderny</figcaption>
-            </figure>
-          </div>
+        <div style={{marginBottom: 40}}>
+          <Stage title="Stavitel sítě · Meziválečná Praha" right={<span className="chip"><span className="chip-dot" />Hra</span>}>
+            <StepHead step="03 · Kabelomat" title="Propoj síť a vyzkoušej poruchu" />
+            <NetworkBuilder />
+          </Stage>
         </div>
 
         <div className="era-text-wrap" style={{marginBottom:80}}>
@@ -1378,28 +1512,43 @@ function Era2() {
             <blockquote className="era-pullquote">
               „Výpadek jedné linky už neznamená výpadek čtvrti — proud přitekl jinou cestou."
             </blockquote>
-            <p>Meziválečné období přineslo proces <b>centralizace výroby</b> a standardizace distribuční soustavy. Mladá Československá republika zdědila po Rakousku-Uhersku fragmentovaný a nerovnoměrně rozvinutý systém — vedle několika moderních městských podniků (Praha, Brno, Plzeň) existovaly stovky malých obecních, družstevních a soukromých elektráren, z nichž každá pracovala na jiném napětí a často i na jiné frekvenci. Sjednocení bylo nutnou podmínkou pro modernizaci průmyslu i pro rovnoměrnou elektrifikaci venkova, kterou si nová republika vytyčila jako politický cíl. Klíčovým předpisem byl <b>zákon č. 438/1919 Sb. o státní podpoře při zahájení soustavné elektrisace</b>, který rozdělil republiku na licencované obvody a založil <b>všeužitečné elektrárenské podniky</b> pod veřejnou kontrolou — smíšený model kapitálu obcí, země a státu.<sup>[4][5]</sup></p>
-            <p>V Praze byly <b>Elektrické podniky hl. města Prahy</b> (založeny již 1897) klíčovým hráčem: kromě výroby a rozvodu provozovaly i kompletní flotilu elektrických tramvají, takže stály na křižovatce městské infrastruktury a energetiky. V roce 1927 byla zprovozněna modernizovaná <b>Holešovická elektrárna</b> s turbogenerátory Škoda–Brown Boveri o celkovém výkonu <b>77 MW</b> — v době spuštění největší v Československu. Její kotle pracovaly na ostravský a mostecký uhelný koks; pára hnala turbíny do obřích trojfázových generátorů s výstupním napětím 6 kV, které bylo blokovými transformátory zvyšováno na 22 kV pro distribuci po městě.<sup>[3][4]</sup></p>
-            <p>Zásadní bylo postavení dálkového vedení <b>Ervěnice — Praha (100 kV)</b> v letech 1926–1929, jež poprvé přivedlo do Prahy energii ze severočeských hnědouhelných elektráren (Komořany, Ervěnice). Byla to první dálková přenosová linka v republice, dlouhá 92 km a vybavená tehdy nejmodernějšími olejovými vypínači a porcelánovými izolátory ŽSD Plzeň. Postupně bylo Česko propojeno přenosovou páteří (<b>100 kV okruh Podkrušnohoří</b>), která umožnila sdílení výkonu mezi regiony a snížila potřebu lokálních záložních kapacit. Praha se tímto krokem začala proměňovat z výrobního centra ve spotřebitelský uzel napájený „dovezenou" energií.<sup>[5][6]</sup></p>
-            <p>Napěťové hladiny byly v této fázi definitivně sjednoceny: <b>22 kV</b> pro městskou distribuci mezi rozvodnami a trafostanicemi, <b>100 kV</b> pro dálkový přívod, <b>380/220 V</b> pro konečné odběry v bytech a dílnách. Frekvence byla harmonizována na evropský standard <b>50 Hz</b> (v některých starších závodech se ještě do 30. let udržovala 42 Hz a dokonce i stejnosměrné podsítě pro tramvajové trolejové vedení 600 V). V roce 1938 bylo elektřinou napájeno <b>84 % domácností v Praze</b> — proti 45 % v roce 1925. Elektrifikace bytů znamenala nejen osvětlení, ale i masový nástup elektrických spotřebičů: žehličky, vařiče, ventilátorů a prvních chladniček.<sup>[4]</sup></p>
-            <p>Síť se začala koncipovat jako <b>celek</b>, nikoli jako soubor izolovaných uzlů. Vznikla <b>záložní a paralelní vedení</b> — výpadek jedné linky už neznamenal výpadek čtvrti, protože výkon přitekl jinou cestou (princip tzv. „okruhového napájení"). Současně vznikl první stálý <b>dispečink v Praze</b>, který monitoroval stav sítě, řídil zapínání záloh a od roku 1934 byl vybaven telefonicky centralizovaným hlášením poruch. To je princip, který — technologicky modernizovaný — drží městskou síť dodnes; filozoficky je mnoho kruhových okruhů z roku 1935 stále v provozu pod kabelem pod Vinohrady a Vršovicemi.<sup>[6]</sup></p>
-            <p>Období druhé světové války přenosovou infrastrukturu nepoškodilo v rozsahu, v jakém zasáhla např. železnici — Holešovická elektrárna i páteřní vedení byly strategicky chráněny jak protektorátními, tak sovětskými jednotkami v závěru války. Praha tedy do roku 1945 vstupovala s relativně neporušenou sítí, která se stala základem pro další — už socialistický — centralizační skok.<sup>[6]</sup></p>
+            <p>Československá republika, vyhlášená <b>28. října 1918</b>, zdědila po Rakousku-Uhersku energetický systém, jenž byl výsledkem desetiletí živelného růstu. Vedle několika relativně moderních městských podniků — v Praze, Brně nebo Plzni — existovaly na území nové republiky <b>stovky malých obecních, družstevních a soukromých elektráren</b>, pracujících zpravidla na odlišném napětí a často i různé frekvenci. Bez sjednocení tohoto systému nebylo možné efektivně zásobovat průmysl, ani systematicky elektrifikovat venkov.</p>
+
+            <h4 className="prose-sub">Zákon z roku 1919 a nová architektura systému</h4>
+            <p>Prvním zásadním legislativním krokem byl <b>zákon číslo 438/1919 Sb. z. a n. RČS o státní podpoře při zahájení soustavné elektrizace</b>, přijatý 22. července 1919. Zákon vymezil licencované elektrárenské obvody a umožnil vznik takzvaných <b>všeužitečných elektrárenských podniků</b> — smíšených institucí s podílem obcí, zemí a státu, jež měly za úkol plánovat rozvoj sítě a zajistit rovnoměrné zásobování celých regionů, nikoli jen průmyslových center. Šlo o zásadní průlom: energie přestávala být záležitostí soukromého podnikání a stávala se věcí veřejnou.<sup>[9]</sup></p>
+            <p>V Praze sehrály klíčovou roli <b>Elektrické podniky hlavního města Prahy</b>. Podnik spravoval nejen výrobu a rozvod elektrické energie, ale provozoval i síť elektrických tramvají — stál tedy na křižovatce energetiky a městské hromadné dopravy. Tato dvojí role ovlivňovala jak technické parametry sítě (nutnost střídavé i stejnosměrné sekce), tak způsob plánování rozvoje.</p>
+
+            <h4 className="prose-sub">Holešovická elektrárna — srdce pražské soustavy</h4>
+            <p>Centrem pražské výroby elektřiny se stala <b>Holešovická elektrárna</b> na levém břehu Vltavy. Po modernizaci dokončené v roce 1927 disponovala turbogenerátory Škoda–Brown Boveri o celkovém instalovaném výkonu přibližně <b>77 MW</b> — největší elektrárenský celek v Československu tehdejší doby. Palivem byl zejména hnědouhelný koks z ostravských a mosteckých dolů; pára poháněla turbíny spojené s trojfázovými generátory, jejichž výstupní napětí 6 kV bylo blokovými transformátory zvyšováno na 22 kV pro distribuci v rámci města.<sup>[4]</sup></p>
+            <p>Právě v tomto období se stabilizovaly napěťové hladiny pražské soustavy, což odpovídalo zákonu o elektrizaci: <b>22 kV</b> pro distribuci mezi rozvodnami a trafostanicemi, <b>380/220 V</b> pro domácnosti a dílny. Frekvence byla harmonizována na <b>50 Hz</b>, byť starší průmyslové závody si ještě ve 30. letech 20. století udržovaly vlastní podsítě — například 42 Hz nebo stejnosměrné napájení 600 V pro tramvajové trolejové vedení.<sup>[5]</sup></p>
+
+            <h4 className="prose-sub">První dálkové vedení: Ervěnice–Praha</h4>
+            <p>Zásadní infrastrukturní milník přinesla výstavba dálkového přenosového vedení <b>Ervěnice–Praha</b> v letech 1926 až 1929. Vedení o napěťové hladině <b>100 kV</b> propojilo pražskou síť s hnědouhelnými elektrárnami v severních Čechách a umožnilo přivádět do metropole energii vyrobenou mimo ni. S délkou přibližně <b>92 km</b> se jednalo o první linku tohoto druhu v republice; technicky bylo vybaveno soudobými olejovými vypínači a porcelánovými izolátory domácí výroby.<sup>[7]</sup></p>
+            <p>Postupně vznikl <b>okruh 100 kV procházející Podkrušnohořím</b>, jenž propojil jednotlivé regiony a umožnil sdílet výkon elektráren napříč soustavou. Praha se tímto přechodem začala proměňovat z výrobního centra v převážně spotřebitelský uzel závislý na „dovážené" energii ze severočeských pánví.</p>
+
+            <h4 className="prose-sub">Okruhové napájení a vznik dispečinku</h4>
+            <p>Spolu s rozvojem přenosové páteře se měnila i logika provozování sítě. Namísto izolovaných uzlů vznikala záložní a paralelní vedení — výpadek jedné linky přestal znamenat automatický výpadek celé čtvrti, protože výkon přitékal náhradní cestou. Tento princip <b>„okruhového napájení"</b> se stal základem projektování sítí, jež se filosoficky nezměnilo dodnes.</p>
+            <p>Souběžně vznikl v Praze <b>první stálý dispečink</b> sledující stav sítě a řídící spínání záložních prvků. Od roku <b>1934</b> byl vybaven telefonicky centralizovaným systémem hlášení poruch — technologická filozofie, na níž moderní dispečerské řízení stojí dosud.</p>
+
+            <h4 className="prose-sub">Výsledky a přežití války</h4>
+            <p>Zatímco v roce 1918 mělo v celých Čechách přístup k elektřině přibližně <b>40 % obyvatel</b>, do konce 30. let bylo elektrifikováno přes <b>70 % obcí</b>. Praha jako hlavní město tento trend předbíhala — elektrifikace bytů přinesla masový nástup spotřebičů: <b>žehliček, vařičů, ventilátorů a prvních chladniček</b>.<sup>[5]</sup></p>
+            <p>Druhá světová válka přenosovou infrastrukturu neponičila v rozsahu srovnatelném s jiným kritickým průmyslem. Holešovická elektrárna ani páteřní dálkové vedení neutrpěly závažná poškození a Praha vstoupila do roku 1945 s relativně funkční energetickou soustavou, i když elektrifikace během války dále neprobíhala — základem, na nějž navazovaly centralizační investice socialistické éry.</p>
           </div>
 
           <EraSidebar>
             <div className="label" style={{marginBottom:6}}>Epocha II · v číslech</div>
             <EraStat value="77 MW" label="Holešovická elektrárna 1927" />
             <EraStat value="92 km" label="Dálkové vedení Ervěnice–Praha 100 kV" color="blue" />
-            <EraStat value="84 %" label="Pražských domácností s elektřinou 1938" />
+            <EraStat value="70 %" label="Obcí v Čechách elektrifikováno do konce 30. let" />
             <EraStat value="50 Hz" label="Sjednocení frekvence" color="blue" />
-            <EraQuote source="Zákon č. 438/1919 Sb.">Soustavná elektrisace jako věc veřejného zájmu republiky.</EraQuote>
+            <EraQuote source="Zákon č. 438/1919 Sb.">Soustavná elektrizace jako věc veřejného zájmu republiky.</EraQuote>
             <EraTimeline items={[
-              {year: '1919', text: 'Zákon o soustavné elektrisaci'},
+              {year: '1919', text: 'Zákon o soustavné elektrizaci'},
               {year: '1926', text: 'Start stavby vedení Ervěnice–Praha'},
               {year: '1927', text: 'Modernizovaná Holešovická elektrárna (77 MW)'},
               {year: '1929', text: 'Spuštění první dálkové linky 100 kV'},
               {year: '1934', text: 'Dispečink s telefonickým hlášením poruch'},
-              {year: '1938', text: '84 % pražských domácností elektrifikováno'},
+              {year: '1938', text: '70 % obcí v Čechách elektrifikováno'},
             ]} />
           </EraSidebar>
         </div>
@@ -1555,23 +1704,15 @@ function Era3() {
     <section className="era" id="era-3" data-screen-label="03 Socialismus">
       <div className="era-inner">
         <EraHead index="III" eraKey="Epocha III" dates="1948 — 1989"
-          title="Výkon státu, ne trhu"
-          kicker="Praha přestává být výrobcem. Stává se velkým spotřebičem napájeným z Dukovan, Tušimic a Mělníka. Nad celou sítí stojí jediný dispečerský pult — a ten držíš teď ty." />
+          title="Stát jako elektrárna"
+          kicker="Praha přestává být výrobcem. Stává se velkým spotřebičem napájeným z Dukovan, Tušimic a Mělníka. Nad celou sítí stojí jediný dispečerský pult — a ten držíš teď ty."
+          img={{src: window.IMGS.socialismus, alt: "Socialistická elektrárna", caption: "Hierarchická soustava · éra plánu"}} />
 
-        <div className="era-body" style={{marginBottom: 40}}>
-          <div>
-            <figure className="imgframe" style={{margin:0}}>
-              <img src={window.IMGS.socialismus} alt="Socialistická elektrárna" />
-              <figcaption>Hierarchická soustava · éra plánu</figcaption>
-            </figure>
-          </div>
-
-          <div>
-            <Stage title="Pražský dispečink · 1975" right={<span className="chip"><span className="chip-dot" style={{background:'var(--red)'}} />Simulátor</span>}>
-              <StepHead step="05 · Držíš frekvenci 50 Hz" title="Vyrovnej výrobu a spotřebu" />
-              <Dispecink />
-            </Stage>
-          </div>
+        <div style={{marginBottom: 40}}>
+          <Stage title="Pražský dispečink · 1975" right={<span className="chip"><span className="chip-dot" style={{background:'var(--red)'}} />Simulátor</span>}>
+            <StepHead step="05 · Držíš frekvenci 50 Hz" title="Vyrovnej výrobu a spotřebu" />
+            <Dispecink />
+          </Stage>
         </div>
 
         <div className="era-text-wrap" style={{marginBottom:80}}>
@@ -1579,28 +1720,97 @@ function Era3() {
             <blockquote className="era-pullquote">
               „Praha přestala vyrábět. Stala se velkým spotřebičem napojeným na vzdálené mlýny výkonu."
             </blockquote>
-            <p>Po roce 1948 byla energetika v Československu znárodněna zákonem č. 114/1948 Sb. a postupně převedena pod <b>České energetické závody</b> (ČEZ, založeny 1946 jako národní podnik, od 1953 součást centrálně řízené struktury plánovaného hospodářství). Soukromé a obecní podíly byly vyvlastněny bez náhrady; všechny elektrárny, rozvodny, páteřní vedení i dispečinky byly podřízeny jednomu ministerskému plánu. Rozhodujícím rysem období byla <b>koncentrace výroby do velkých zdrojů mimo území hlavního města</b> — elektrárny už nebyly stavěny u spotřebitelů, ale u zdrojů paliva (uhelných pánví v Podkrušnohoří a na Sokolovsku), což minimalizovalo logistické náklady na dopravu uhlí a současně přesouvalo průmyslové emise z metropole. Pražské lokální elektrárny (Karlín, Holešovice) byly postupně odstaveny nebo převedeny na kombinovanou výrobu tepla a elektřiny pro dálkové vytápění sídlišť.<sup>[6][7]</sup></p>
-            <p>Klíčové zdroje napájející Prahu v tomto období: <b>Mělník I (1960, 440 MW)</b> s přivedeným Labem pro chladicí vodu, <b>Tušimice I a II (1964–1974, 1 200 MW)</b>, <b>Počerady (1970–1977, 5×200 MW)</b>, <b>Prunéřov I a II (1967–1981, celkem 1 490 MW)</b>. Z vodních zdrojů špičkového typu: <b>Dalešice (1978, 4×120 MW)</b> s přečerpávací <b>Mohelnem</b>, sloužící k vyrovnávání denních špiček. Kaskáda <b>Vltavské elektrárny</b> (Orlík, Slapy, Lipno) byla dokončena v 60. letech a dosud představuje důležitý regulační zdroj pro pražskou oblast. Po roce 1985 se přidala <b>Jaderná elektrárna Dukovany</b> (4×510 MW, reaktory VVER-440), od 1987 byly zahájeny práce na <b>Temelíně</b> (2×1 000 MW VVER-1000), jehož první blok byl komerčně spuštěn až v roce 2002.<sup>[7][8]</sup></p>
-            <p>Budování nadřazené <b>přenosové soustavy 400 kV</b> začalo v roce 1956 (první československé vedení Sokolnice–Lemešany, dlouhé 341 km a tehdy nejdelší VVN v Evropě). Kolem Prahy vznikl postupně <b>kruhový okruh 400 kV</b> s rozvodnami <b>Chodov, Řeporyje, Malešice a Čechy-Střed</b> (Týnec nad Labem), propojený vedeními na zdroje v Podkrušnohoří (Hradec, Chomutov) a dál na východ (Krasíkov, Nošovice). V druhé polovině 70. let byla zavedena i hladina <b>220 kV</b> jako mezistupeň mezi 400 kV a regionální distribucí 110 kV; v pražské oblasti ji dnes nahrazuje 400/110 kV přímá transformace.<sup>[6][8]</sup></p>
-            <p>V roce 1962 bylo Československo propojeno s přenosovými soustavami NDR, Polska, Maďarska, Rumunska, Bulharska a SSSR v rámci <b>soustavy MIR</b> (Mir — „mír", synchronní zóna RVHP). Synchronizace na 50,00 Hz s Moskvou představovala ohromnou výzvu — regulační rezervy se sdílely napříč celým východním blokem, což zvyšovalo odolnost systému, ale současně vytvářelo politickou závislost na centrální regulaci. Po roce 1995 byla česká a slovenská zóna přepojena do západoevropské <b>UCTE</b> (Union for the Coordination of Transmission of Electricity, dnes <b>ENTSO-E Continental Europe</b>) — technicky náročná operace, která vyžadovala odpojení na přenosové úrovni a nové synchronizační protokoly.<sup>[6][8]</sup></p>
-            <p>Praha sama prošla v 50.–80. letech rozsáhlou modernizací kabelové sítě. Vznikla síť <b>rozvoden 110 kV</b> napojená na páteř 400 kV přes transformátory 400/110 kV — Chodov, Holešovice, Malešice, Řeporyje. Od 60. let se stavěly <b>velké trafostanice na sídlištích</b> (Jižní Město, Severní Město, Jihozápadní Město), které napájely rostoucí masu panelových bytů a nových linek metra (1974). Dispečink pražské distribuční soustavy přesídlil do <b>budovy EČS</b> v Holešovicích a byl postupně vybavován prvními poloautomatickými systémy telemetrie.<sup>[7][8]</sup></p>
-            <p>Období lze charakterizovat jako fázi <b>maximální centralizace</b> — energetická infrastruktura byla řízena centrálním dispečinkem, s důrazem na výkonovou bezpečnost a stabilitu, méně však na flexibilitu nebo ekologickou šetrnost. Ekonomika priorizovala těžký průmysl — spotřeba rostla <b>průměrně 4,5 % ročně</b> a instalovaný výkon v ČSSR se za 40 let zvýšil přibližně šestinásobně. Ekologické dopady (SO<sub>2</sub>, popílek, kyselé deště) se staly jedním z klíčových témat listopadu 1989 a nastavily agendu pro následující transformaci.<sup>[7]</sup></p>
+            <h4 className="prose-sub">Znárodnění a institucionální rámec</h4>
+            <p>Klíčový majetkový obrat v československé energetice nezačal až po únoru 1948, ale již na podzim 1945. Sérií <b>dekretů prezidenta republiky z 24. října 1945</b>, zejména dekretu č. 100/1945 Sb., byly znárodněny doly a klíčové podniky energetického a těžkého průmyslu.<sup>[11]</sup> V roce 1946 byly založeny <b>Československé energetické závody (ČEZ)</b> jako prostředník mezi Ministerstvem průmyslu a jednotlivými podniky a současně byl zřízen centrální dispečink pro řízení soustavy.<sup>[12]</sup> Po komunistickém převzetí moci v únoru 1948 přešla energetika definitivně na plánované hospodářství a pětileté plány se staly hlavním rytmem investiční výstavby. Často však byly pětiletky doplňované překlenovacími plány, neboť jejich úkoly se většinou nepodařilo splnit.<sup>[16]</sup></p>
+            <p>Právní rámec pro centralizované řízení elektroenergetiky byl zformalizován <b>zákonem č. 79/1957 Sb.</b>, o výrobě, rozvodu a spotřebě elektřiny, který výslovně stanovil, že energetická díla zřizují a provozují organizace v působnosti Ministerstva energetiky (1955–1958).<sup>[13]</sup> V roce 1950 došlo ke <b>sjednocení dosud izolovaných regionálních přenosových systémů do jedné celostátní soustavy</b>.<sup>[12]</sup></p>
+            <p>Akciová společnost ČEZ v dnešní podobě byla založena až v roce 1992; pojem „ČEZ" se proto v období 1948–1989 vztahuje na trust <b>Československých</b>, později <b>Českých energetických závodů</b>.</p>
+            <p>Výroba se v této etapě přesunula od spotřebitelů ke zdrojům paliva — k uhelným pánvím v <b>Podkrušnohoří</b> a na <b>Sokolovsku</b>. Průmyslové emise tak opustily metropoli, ale ekologické náklady se přesunuly do krajiny severních Čech.<sup>[19, 14]</sup></p>
+
+            <h4 className="prose-sub">Vznik nových velkých zdrojů energie</h4>
+            <p>S rozvojem a rozmachem elektrické energie byla potřeba výstavba nových zdrojů elektrické energie. Mezi koncem 50. let a polovinou 80. let 20. století vznikl postupně <b>věnec velkých zdrojů</b> — tepelných, vodních i jaderných — který napájel pražskou aglomeraci i celou centrální oblast soustavy. Přehled klíčových zdrojů a jejich původních (socialistických) parametrů:</p>
+
+            <table className="prose-table">
+              <caption>Tabulka 1 · Nové zdroje energetické soustavy ČSSR (1960–1987)<sup>[18][20][21][22][23][24][25]</sup></caption>
+              <thead>
+                <tr>
+                  <th>Elektrárna</th>
+                  <th>Uvedení do provozu</th>
+                  <th>Původní instalovaný výkon</th>
+                  <th>Typ</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr><td>Mělník I</td><td className="num">1960</td><td>6 × 50 MW (po přestavbě 4 × 60 MW = 240 MW)</td><td>tepelná (hnědé uhlí)</td></tr>
+                <tr><td>Mělník II</td><td className="num">1971</td><td>4 × 110 MW = 440 MW</td><td>tepelná</td></tr>
+                <tr><td>Mělník III</td><td className="num">1981</td><td>1 × 500 MW (tehdy největší blok v ČSSR)</td><td>tepelná</td></tr>
+                <tr><td>Tušimice I</td><td className="num">1963–1964</td><td>6 × 110 MW = 660 MW</td><td>tepelná</td></tr>
+                <tr><td>Tušimice II</td><td className="num">1974–1975</td><td>4 × 200 MW = 800 MW</td><td>tepelná</td></tr>
+                <tr><td>Počerady I + II</td><td className="num">1970–1971, 1977</td><td>6 × 200 MW = 1 200 MW</td><td>tepelná</td></tr>
+                <tr><td>Prunéřov I</td><td className="num">1967–1968</td><td>6 × 110 MW = 660 MW</td><td>tepelná</td></tr>
+                <tr><td>Prunéřov II</td><td className="num">1981–1982</td><td>5 × 210 MW = 1 050 MW</td><td>tepelná</td></tr>
+                <tr><td>Chvaletice</td><td className="num">1977–1978</td><td>4 × 200 MW = 800 MW</td><td>tepelná</td></tr>
+                <tr><td>Dětmarovice</td><td className="num">1975–1976</td><td>4 × 200 MW = 800 MW</td><td>tepelná</td></tr>
+                <tr><td>Dalešice</td><td className="num">1978</td><td>4 × 120 MW = 480 MW</td><td>přečerpávací vodní</td></tr>
+                <tr><td>Dukovany</td><td className="num">1985–1987</td><td>4 × 440 MW = 1 760 MW (VVER-440/213)</td><td>jaderná</td></tr>
+                <tr><td>Temelín</td><td className="num">výstavba 1987</td><td>(zprovoznění až 2002–2003)</td><td>jaderná</td></tr>
+              </tbody>
+            </table>
+
+            <p>Vývoj instalovaných výkonů ilustruje postup ke stále větším jednotkám: zatímco na počátku 60. let 20. století se naplno rozběhla výstavba bloků 110 MW, koncem dekády přicházejí bloky 200 MW, a v roce 1981 byl v <b>Mělníku III</b> spuštěn první (a do počátku 21. století největší) tuzemský uhelný blok o výkonu <b>500 MW</b>.<sup>[14][15]</sup> Celkem bylo v ČSSR v období 1970–1989 nově vybudováno přibližně <b>8 640 MW</b> elektrárenských výkonů.<sup>[14]</sup></p>
+
+            <h4 className="prose-sub">Soustava 220/400 kV a okruh kolem Prahy</h4>
+            <p>Budování nadřazené přenosové soustavy začalo v roce 1951 prvním vedením <b>220 kV mezi rozvodnami Výškov a Opočínek</b>; jeho úkolem bylo přivést výkon z mostecké uhelné oblasti do energeticky deficitních východních Čech.<sup>[16]</sup> Výstavba 220 kV soustavy pokračovala v 50. letech 20. století přes Sokolnice, Lískovec a Bystričany na Slovensku a v roce <b>1959</b> dosáhla mezinárodního propojení s <b>Polskem a Rakouskem</b>.<sup>[16]</sup></p>
+            <p>V roce 1962 vznikla v Praze <b>Centrální dispečerská organizace (CDO)</b> jako řídicí orgán propojené energetické soustavy „Mír". O rok později — v roce 1963 — bylo zprovozněno první 400 kV vedení mezi <b>Lemešany na východním Slovensku a Mukačevem v SSSR</b>, zpočátku ovšem provozované jen napětím 220 kV.<sup>[16]</sup> První 400 kV vedení uvnitř Československa, tzv. <b>jižní magistrála mezi Hradcem u Kadaně a Sokolnicemi</b>, bylo uvedeno do provozu až v roce 1966.<sup>[16]</sup> Od konce 60. let 20. století byla výstavba 220 kV soustavy ukončena a další rozvoj směřoval výhradně k 400 kV; síť 110 kV převzala roli distribuční.<sup>[16]</sup></p>
+            <p>Kolem Prahy postupně vznikl <b>kruhový okruh 400 kV</b> s rozvodnami <b>Chodov, Řeporyje, Malešice a Čechy–Střed</b> (Týnec nad Labem), propojený jak s uhelnou základnou v Podkrušnohoří, tak s východními zdroji republiky. Páteřní přenosová soustava byla v hrubých rysech dokončena v 80. letech 20. století.<sup>[12]</sup></p>
+
+            <h4 className="prose-sub">Synchronizace MIR — elektrické propojení východního bloku</h4>
+            <p>Politickou nadstavbou technického propojení sítí byla integrace do energetické soustavy <b>MIR</b> (zahrnující NDR, Polsko, Maďarsko, Rumunsko, Bulharsko a SSSR), kterou koordinovala pražská CDO.<sup>[16]</sup> Sdílení regulačních rezerv napříč východním blokem zvyšovalo odolnost systému, ale současně vytvářelo politickou závislost na centrální regulaci uvnitř <b>Rady vzájemné hospodářské pomoci (RVHP)</b>. Až po roce <b>1995</b> byla česká a slovenská zóna přepojena do západoevropské <b>UCTE</b> (dnes <b>ENTSO-E Continental Europe</b>) — operace, která vyžadovala odpojení na přenosové úrovni a zavedení nových synchronizačních protokolů a která symbolicky stvrdila přesun republiky z jedné geopolitické sféry do druhé.<sup>[12]</sup></p>
+
+            <figure className="prose-figure">
+              <div className="prose-figure-head">
+                <span className="label">Obrázek 1 · 1959</span>
+                <span className="title">Stav přenosové soustavy v roce 1959 <sup>[16]</sup></span>
+              </div>
+              <img src="prenosova1959.png" alt="Stav československé přenosové soustavy v roce 1959" className="prose-figure-img" />
+            </figure>
+
+            <figure className="prose-figure">
+              <div className="prose-figure-head">
+                <span className="label">Obrázek 2 · 1968</span>
+                <span className="title">Stav přenosové soustavy v roce 1968 <sup>[16]</sup></span>
+              </div>
+              <img src="prenosova1968.png" alt="Stav československé přenosové soustavy v roce 1968" className="prose-figure-img" />
+            </figure>
+
+            <h4 className="prose-sub">Jaderný program a vznik dozorových orgánů</h4>
+            <p>Československo se zařadilo mezi pionýry mírového využívání jaderné energie velmi brzy. V dubnu 1955 byla podepsána <b>československo-sovětská dohoda</b> o sovětské pomoci při výstavbě centra jaderného výzkumu a výchově domácích specialistů; vládním nařízením č. 30/1955 byl zřízen <b>Vládní výbor pro výzkum a mírové využití jaderné energie</b>, který následně založil <b>Ústav jaderné fyziky v Řeži u Prahy</b>.<sup>[17]</sup> Ve stejném roce vznikla i Fakulta technické a jaderné fyziky při Univerzitě Karlově (od roku 1968 dnešní <b>Fakulta jaderná a fyzikálně inženýrská (FJFI) ČVUT v Praze</b>).<sup>[17]</sup></p>
+            <p>V roce 1956 se Československo ve spolupráci se Sovětským svazem rozhodlo vyvíjet vlastní těžkovodní plynem chlazený reaktor využívající přírodní uran — projekt elektrárny <b>A-1 v Jaslovských Bohunicích</b> na Slovensku, jejíž výstavba byla zahájena v roce 1958 a provoz spuštěn v roce 1972.<sup>[17]</sup> Po havárii v roce 1977 a definitivním rozhodnutí o nevracení A-1 do provozu z roku 1979 došlo ke změně koncepce a všechny další bloky byly stavěny s tlakovodními reaktory typu <b>VVER</b>.<sup>[17]</sup></p>
+            <p>Institucionální rámec dozoru se vyvíjel souběžně s tímto programem. V roce 1959 byla usnesením vlády č. 339 zřízena <b>Komise pro atomovou energii</b>, která byla v roce 1962 transformována na <b>Československou komisi pro atomovou energii (ČSKAE)</b> se statutem stálého výboru Státní komise pro rozvoj a koordinaci vědy a techniky.<sup>[17]</sup> Do působnosti ČSKAE spadala tvorba a plnění československého jaderného programu, problematika jaderné bezpečnosti, kontrola štěpných materiálů a mezinárodní spolupráce; tvořilo ji šest odborů, mimo jiné odbor jaderné bezpečnosti a záruk, odbor jaderné energetiky a odbor uranu.<sup>[17]</sup> Po federalizaci republiky od 1. 1. 1969 se ČSKAE stala federálním orgánem státní správy.</p>
+            <p>S nástupem stavby reaktorů VVER ke konci 70. let 20. století začaly i počátky systematické legislativní a dozorové činnosti. Klíčovým rámcem se stala novela stavebního zákona č. 50/1976 Sb. a její prováděcí vyhlášky č. 83 a 85/1976 Sb., které vyžadovaly pro stavby s jadernými zařízeními zvláštní souhlas ČSKAE a definovaly náležitosti bezpečnostních zpráv.<sup>[17]</sup> V letech 1977–1980 vydala ČSKAE základní právně závazné předpisy o evidenci jaderných materiálů, navrhování staveb s jaderně energetickým zařízením, zajištění jakosti a o jaderné bezpečnosti při spouštění a provozu.<sup>[17]</sup> Celý proces vyvrcholil <b>zákonem č. 28/1984 Sb.</b>, o výkonu státního dozoru nad jadernou bezpečností jaderných zařízení, který svěřil dozor ČSKAE jako orgánu nezávislému na výrobcích a provozovatelích, zakotvil odpovědnost provozovatele za jadernou bezpečnost a zavedl systém pokut.<sup>[17]</sup> Tato právní úprava položila základ, na němž byl v roce 1993 — již po rozpadu federace — zřízen dnešní <b>Státní úřad pro jadernou bezpečnost (SÚJB) České republiky</b> jako právní nástupce ČSKAE.</p>
+            <p>Vrcholem socialistické jaderné výstavby na českém území byla <b>Jaderná elektrárna Dukovany</b> se čtyřmi bloky VVER-440/213, jejíž první blok byl k síti připojen v únoru 1985 a poslední, čtvrtý blok, byl zprovozněn v červenci 1987.<sup>[18]</sup> Původní instalovaný výkon činil 4 × 440 MW = <b>1 760 MW</b>. Současný stav 4 × 512 MW je výsledkem modernizačních programů z let 2005–2012, nikoli původní socialistické výstavby.<sup>[18]</sup> Výstavba <b>Jaderné elektrárny Temelín</b> byla zahájena v roce 1987, dokončení obou bloků však proběhlo až v letech 2002–2003 a do bilance socialistického období proto nepatří jako provozovaný zdroj.</p>
+
+            <h4 className="prose-sub">Praha: kabelová síť, sídliště a metro</h4>
+            <p>Praha prošla v 50.–80. letech 20. století rozsáhlou modernizací kabelové sítě. Vznikla síť <b>rozvoden 110 kV</b> napojená přes transformátory <b>400/110 kV v Chodově, Holešovicích, Malešicích a Řeporyjích</b>. Od 60. let 20. století přibývaly velké trafostanice na sídlištích — <b>Jižní Město, Severní Město, Jihozápadní Město</b> — napájející rostoucí masu panelových bytů i nové linky <b>metra (provoz zahájen v roce 1974)</b>.<sup>[12][19]</sup> Dispečink pražské distribuční soustavy přesídlil do budovy ČEZ v Holešovicích a byl postupně vybavován prvními poloautomatickými systémy telemetrie, které byly zárodkem dnešního plně digitálního řízení sítě.<sup>[12]</sup></p>
+
+            <h4 className="prose-sub">Centralizace, růst a ekologický dluh</h4>
+            <p>Celé období lze charakterizovat jako fázi <b>maximální centralizace</b>. Energetika byla řízena s důrazem na výkonovou bezpečnost a podporu průmyslové výroby, nikoli na flexibilitu nebo ekologickou šetrnost. Cenová politika tomu odpovídala: v letech <b>1968–1976</b> se v rámci politiky „levné elektřiny" vůbec neměnily ceny elektřiny, což vedlo k narůstajícímu nesouladu mezi výrobními náklady a cenou, jenž byl řešen státními dotacemi.<sup>[12]</sup> Tato cenová strategie nemotivovala k racionalizaci spotřeby a vzdalovala Československo od západní Evropy, která po ropné krizi roku 1973 přešla na úsporný režim.</p>
+            <p>Prudký rozvoj uhelných elektráren si vybíral daň na životním prostředí a uvědomovali si to i socialističtí plánovači. Jediný systematický pokus o odsíření <b>(Tušimice II)</b>, zahájený v 80. letech 20. století, ovšem nikdy nebyl dotažen do konce, neboť odsiřovací jednotku sovětské provenience se nepodařilo uvést do provozu.<sup>[14]</sup> Důsledkem byly masivní emise SO<sub>2</sub>, popílku a kyselých dešťů devastující lesy Krušnohoří. Teprve v letech <b>1992–1998</b> realizovala ČEZ patrně nejrozsáhlejší a nejrychlejší ekologizační program v Evropě, v jehož rámci klesly emise SO<sub>2</sub> o <b>92 %</b> a emise popílku o <b>95 %</b>.<sup>[14]</sup> Ekologický dluh socialistické energetiky se tak stal jedním z klíčových témat listopadu 1989 a nastavil agendu pro celou následující transformaci sektoru.</p>
           </div>
 
           <EraSidebar>
             <div className="label" style={{marginBottom:6}}>Epocha III · v číslech</div>
-            <EraStat value="400 kV" label="Páteřní přenosová soustava od 1956" />
-            <EraStat value="2 040 MW" label="Dukovany (4 reaktory VVER-440)" color="blue" />
-            <EraStat value="4,5 %" label="Roční růst spotřeby 1950–1989" />
-            <EraStat value="×6" label="Nárůst instalovaného výkonu ČSSR" color="blue" />
-            <EraQuote source="Směrnice RVHP, 1962">Synchronní soustava MIR od Berlína po Moskvu.</EraQuote>
+            <EraStat value="1945" label="Znárodnění (dekret prezidenta č. 100/1945)" />
+            <EraStat value="1966" label="První 400 kV vedení v ČSSR (jižní magistrála)" color="blue" />
+            <EraStat value="1 760 MW" label="Dukovany 1985–87 (4×VVER-440)" />
+            <EraStat value="8 640 MW" label="Nové výkony v ČSSR 1970–1989" color="blue" />
+            <EraQuote source="Soustava MIR · RVHP">Synchronní propojení od Berlína po Moskvu, koordinováno pražskou CDO.</EraQuote>
             <EraTimeline items={[
-              {year: '1948', text: 'Znárodnění energetiky (zákon 114/1948 Sb.)'},
-              {year: '1956', text: 'První vedení 400 kV Sokolnice–Lemešany'},
-              {year: '1960', text: 'Mělník I spuštěn (440 MW)'},
-              {year: '1962', text: 'Československo vstupuje do synchronní zóny MIR'},
-              {year: '1974', text: 'První linka pražského metra'},
-              {year: '1985', text: 'Komerční provoz JE Dukovany'},
+              {year: '1945', text: 'Dekret prezidenta č. 100/1945 (znárodnění)'},
+              {year: '1951', text: 'První vedení 220 kV Výškov–Opočínek'},
+              {year: '1960', text: 'Mělník I spuštěn (6×50 MW)'},
+              {year: '1962', text: 'Pražská CDO řídí soustavu MIR'},
+              {year: '1966', text: 'První 400 kV v ČSSR (Hradec u Kadaně–Sokolnice)'},
+              {year: '1985', text: 'Komerční provoz JE Dukovany (4×440 MW)'},
             ]} />
           </EraSidebar>
         </div>
@@ -1820,22 +2030,14 @@ function Era4() {
       <div className="era-inner">
         <EraHead index="IV" eraKey="Epocha IV" dates="1990 — 2010"
           title="Rozbij monopol. Dráty si nech."
-          kicker="Listopad '89. Monolitický státní podnik se láme na čtyři role. Někdo vyrábí, někdo přenáší, někdo distribuuje, někdo obchoduje. Dráty zůstávají monopolem — jenže elektřinu si teď vybíráš u koho chceš." />
+          kicker="Listopad '89. Monolitický státní podnik se láme na čtyři role. Někdo vyrábí, někdo přenáší, někdo distribuuje, někdo obchoduje. Dráty zůstávají monopolem — jenže elektřinu si teď vybíráš u koho chceš."
+          img={{src: window.IMGS.cez, alt: "ČEZ", caption: "ČEZ · výroba · SCADA · GIS rozvodny"}} />
 
-        <div className="era-body" style={{marginBottom: 40}}>
-          <div>
-            <Stage title="Unbundling · hra" right={<span className="chip"><span className="chip-dot" />Drag & drop</span>}>
-              <StepHead step="07 · Rozděl vertikálně integrovaný podnik" title="Kdo co dělá po roce 1995?" />
-              <UnbundlingGame />
-            </Stage>
-          </div>
-
-          <div>
-            <figure className="imgframe" style={{margin:0}}>
-              <img src={window.IMGS.cez} alt="ČEZ" />
-              <figcaption>ČEZ · výroba · SCADA · GIS rozvodny</figcaption>
-            </figure>
-          </div>
+        <div style={{marginBottom: 40}}>
+          <Stage title="Unbundling · hra" right={<span className="chip"><span className="chip-dot" />Drag & drop</span>}>
+            <StepHead step="07 · Rozděl vertikálně integrovaný podnik" title="Kdo co dělá po roce 1995?" />
+            <UnbundlingGame />
+          </Stage>
         </div>
 
         <div className="era-text-wrap" style={{marginBottom:80}}>
@@ -1843,36 +2045,74 @@ function Era4() {
             <blockquote className="era-pullquote">
               „Fyzický tok ≠ obchodní tok. Elektrony plyn Kirchhoffem, peníze plynou smlouvou."
             </blockquote>
-            <p>Transformace po roce 1989 přinesla zásadní koncepční obrat nazývaný <b>unbundling</b> — vertikální rozdělení dosud monolitického energetického podniku na čtyři samostatné funkční role: výrobu, přenos, distribuci a obchod s elektřinou. Logika byla ekonomická i politická: <i>výroba</i> a <i>obchod</i> jsou činnosti, kde lze zavést konkurenci, protože kdokoli může postavit zdroj nebo nakupovat a prodávat kontrakt; <i>přenos</i> a <i>distribuce</i> jsou však <b>přirozené monopoly</b> (paralelní vedení přes celé město je nesmyslné), a musí proto být regulovány veřejně. Proces byl přímo formován evropskou legislativou: <b>směrnice 96/92/ES</b> (první liberalizační balíček), <b>2003/54/ES</b> (druhý), <b>2009/72/ES</b> (třetí, vyžadující plné oddělení vlastnictví) a <b>2019/944</b> (čtvrtý, Clean Energy Package). V ČR byly transponovány zákonem č. 458/2000 Sb. (<b>energetický zákon</b>) a jeho řadou novel.<sup>[9][10]</sup></p>
-            <p>V roce 1999 vznikl z ČEZ samostatný subjekt <b>ČEPS, a.s.</b> jako provozovatel přenosové soustavy 400 a 220 kV (cca <b>3 800 km vedení</b> a <b>43 rozvoden</b>). ČEPS je 100% státním podnikem, řízeným ministerstvem financí, a svou činností garantuje nediskriminační přístup všech výrobců a obchodníků k přenosové soustavě. Kromě fyzického provozu vede ČEPS denní <b>dispečink celé ČR</b>, zajišťuje primární a sekundární regulaci frekvence, nákup podpůrných služeb (aFRR, mFRR, SCR) a přeshraniční kapacitní aukce v rámci ENTSO-E. Roční objem přenesené elektřiny činí přibližně 75 TWh.<sup>[9]</sup></p>
-            <p>V pražském kontextu získává klíčovou roli <b>PRE distribuce, a.s.</b> (součást skupiny <b>Pražská energetika</b>, hlavními akcionáři jsou Hlavní město Praha 51 % a německý EnBW 41 %). PRE provozuje cca <b>9 500 km kabelového vedení</b> (VVN 110 kV, VN 22 kV a NN 0,4 kV) a napájí přes <b>730 000 odběrných míst</b> na území Prahy a Roztok u Prahy. Unikátní charakteristikou pražské sítě je extrémně vysoká míra kabelizace — zatímco celorepublikový průměr kabelů na VN je asi 35 %, v Praze dosahuje <b>99,8 %</b>. Důvodem je hustota zástavby, historická památková ochrana (nelze vést vzdušné vedení přes centrum) a vysoké nároky na spolehlivost. Kabel má proti venkovní lince výhodu nezávislosti na počasí — pražská síť prakticky neví, co je ledová pokrývka, stromy v lince nebo blesk — ale jeho stavba a výměna je 5–7× dražší a poruchy se hledají obtížněji.<sup>[11]</sup></p>
-            <p>1. 1. 2002 byl zahájen <b>liberalizovaný trh s elektřinou</b>: nejprve pro velké odběratele nad 40 GWh/rok, od 1. 1. 2005 pro všechny firmy a od 1. 1. 2006 pro všechny domácnosti. Regulaci vykonává <b>Energetický regulační úřad (ERÚ</b>, založený 2001), který stanovuje cenové rozhodnutí pro regulované složky (distribuce, přenos, OZE příspěvek, systémové služby). Krátkodobý (spotový) a blokový trh organizuje <b>OTE, a.s.</b> (Operátor trhu s elektřinou a plynem) přes denní aukce <b>Day-ahead Market</b> a <b>Intraday Market</b>, napojené na evropský platformový projekt <b>SDAC</b> (Single Day-Ahead Coupling) a <b>SIDC</b> (Intraday Coupling).<sup>[9][10]</sup></p>
-            <p>Klíčovým konceptem je rozdíl mezi <b>fyzickým tokem elektřiny</b> a <b>finančním/obchodním tokem</b>. Elektřina teče kabelem podle Kirchhoffových zákonů — od libovolného zdroje v AC soustavě do nejbližšího spotřebiče, nelze ji „směrovat". Obchodní smlouva ale definuje, kdo platí komu: zákazník může mít smlouvu s obchodníkem v Ostravě, ale elektrony přijdou z nejbližší pražské trafostanice. Proto změna dodavatele nevyžaduje nové kabely a lze ji provést administrativně během několika dnů přes portál ERÚ.<sup>[10]</sup></p>
-            <p>Technologicky se v této éře masově zavádí <b>SCADA</b> (Supervisory Control and Data Acquisition) — digitální dispečerské systémy s vizualizací stavu celé sítě v reálném čase. Rozvodny jsou modernizovány na <b>plynem izolované provedení (GIS)</b>, které snižuje jejich plochu desetkrát a umožňuje umístit rozvodnu do podzemí nebo do budovy (např. rozvodna Karlín je plně pod zemí). Zavádí se dálkový monitoring, automatické opětovné zapínání a sledování spolehlivostních ukazatelů <span className="mono">SAIDI</span> (System Average Interruption Duration Index) a <span className="mono">SAIFI</span> (System Average Interruption Frequency Index). V Praze klesl SAIDI z přibližně 90 minut/rok (1995) na dnešních <b>pod 20 minut/rok</b> — tzn. průměrný pražský odběratel je bez proudu méně než 20 minut ročně, což je jedno z nejlepších čísel v Evropě.<sup>[11]</sup></p>
+            <p>Transformace po roce 1989 přinesla zásadní koncepční obrat nazývaný <b>unbundling</b> — vertikální rozdělení dosud monolitického energetického podniku na čtyři samostatné role: výrobu, přenos, distribuci a obchod s elektřinou. Logika byla ekonomická i politická: výroba a obchod jsou tržní činnosti otevřené konkurenci, zatímco přenos a distribuce jsou <b>přirozené monopoly</b> vyžadující veřejnou regulaci. V případě pražské energetiky byl tento proces spojen s privatizací: k <b>1. lednu 1994 vznikla Pražská energetika, a. s.</b> se základním jměním téměř 3,9 miliardy korun. Zahraniční kapitál vstoupil postupně prostřednictvím německé společnosti GESO AG a později RWE Plus AG; koncem roku 2000 vznikla <b>Pražská energetika Holding (PREH)</b>, ve které si Hlavní město Praha uchovávalo <b>51 % podíl</b>.<sup>[26][28][30]</sup></p>
+
+            <h4 className="prose-sub">Evropské směrnice a jejich transpozice do českého práva</h4>
+            <p>Rámec liberalizace byl v Evropě budován postupně třemi legislativními balíčky, přičemž za vzor posloužila liberalizace trhu ve <b>Velké Británii (od roku 1990)</b> a ve Skandinávii (společný norsko-švédský trh <b>Nordpool od roku 1993</b>). Jejich společným jmenovatelem bylo přesvědčení, že vertikálně integrovaný monopol brání rozvoji konkurence a investicím do nové infrastruktury. Jednotlivé členské státy EU přistoupily k implementaci směrnic různě: některé — Skandinávie, Španělsko, Velká Británie — rychle a fakticky, jiné pouze formálně, další odmítaly urychlovat liberalizaci z důvodu vysoké míry státního vlivu (Francie, Itálie).<sup>[27][29][31]</sup></p>
+
+            <table className="prose-table">
+              <caption>Tabulka 2 · Tři liberalizační balíčky EU</caption>
+              <thead>
+                <tr><th>Směrnice</th><th>Obsah</th></tr>
+              </thead>
+              <tbody>
+                <tr><td className="num">96/92/ES</td><td>1. liberalizační balíček — otevření trhu pro velké průmyslové odběratele</td></tr>
+                <tr><td className="num">2003/54/ES</td><td>2. balíček — rozšíření okruhu oprávněných zákazníků, posílení regulace</td></tr>
+                <tr><td className="num">2009/72/ES</td><td>3. balíček — povinný ownership unbundling, nezávislost přenosových soustav</td></tr>
+              </tbody>
+            </table>
+
+            <p>V České republice byly směrnice transponovány <b>zákonem č. 458/2000 Sb.</b> (energetický zákon), který nabyl účinnosti 1. ledna 2001 a nahradil původní zákon č. 222/1994 Sb. Zákon nově zřídil <b>Energetický regulační úřad (ERÚ)</b> jako nezávislého regulátora s pravomocí stanovovat ceny za regulované složky dodávky — přenos, distribuci a systémové služby. Regulace probíhala metodou regulovaného přístupu třetích stran <b>(rTPA)</b>, která zaručuje nediskriminační a jednotné tarify pro všechny uživatele sítě.<sup>[26][31]</sup></p>
+
+            <h4 className="prose-sub">Vznik ČEPS a oddělení přenosové soustavy</h4>
+            <p>Jedním z prvních konkrétních kroků unbundlingu byl vznik <b>České elektroenergetické přenosové soustavy (ČEPS, a.s.) v roce 1998</b> jako samostatného vlastníka a provozovatele přenosové soustavy 400 a 220 kV (cca <b>3 800 km vedení</b>). Oddělení od ČEZ bylo právním předpokladem pro připojení k západoevropské synchronní zóně <b>UCTE</b>, k němuž technicky došlo již <b>18. října 1995</b> po splnění přísných podmínek provozu. ČEPS jako 100 % státní podnik garantuje nediskriminační přístup všech výrobců a obchodníků k přenosové síti. Fyzikální provoz soustavy řídí ČEPS na základě Kirchhoffových zákonů, zatímco právní a obchodní rámec zajišťuje ERÚ a operátor trhu <b>Operátor trhu s elektřinou a plynem, a.s. (OTE)</b>.<sup>[28][29]</sup></p>
+
+            <h4 className="prose-sub">Liberalizace trhu — postupné otevírání domácnostem</h4>
+            <p>Otevírání trhu neprobíhalo naráz, ale ve <b>třech vlnách</b> definovaných zákonem č. 458/2000 Sb. První etapou od <b>1. ledna 2002</b> získali právo svobodné volby dodavatele velcí průmysloví odběratelé s roční spotřebou nad 40 GWh. Právě k tomuto datu vstoupila v platnost první etapa liberalizace i pro Pražskou energetiku — přibližně šest týdnů před katastrofálními povodněmi, které v srpnu 2002 postavily společnost před dosud nevídané krizové zkoušky.<sup>[26][30][32]</sup></p>
+
+            <table className="prose-table">
+              <caption>Tabulka 3 · Tři vlny otevírání trhu v ČR</caption>
+              <thead>
+                <tr><th>Datum</th><th>Kdo získal právo zvolit si dodavatele</th></tr>
+              </thead>
+              <tbody>
+                <tr><td className="num">1. 1. 2002</td><td>Velcí odběratelé nad 40 GWh/rok</td></tr>
+                <tr><td className="num">1. 1. 2005</td><td>Všechny firmy a podnikatelé</td></tr>
+                <tr><td className="num">1. 1. 2006</td><td>Všechny domácnosti</td></tr>
+              </tbody>
+            </table>
+
+            <p>Koneční zákazníci svého nového práva zpočátku příliš nevyužívali — k výraznějšímu přechodu dodavatelů došlo až cca <b>2009–2010</b>. V první polovině roku 2010 změnilo dodavatele více než <b>105 812 odběratelů</b> — dvojnásobek než ve stejném období předchozího roku. Do konce září 2010 počet narostl na <b>165 009</b>, z toho 53 tisíc právnických subjektů. Na začátku roku 2011 celkový počet domácností, které změnily dodavatele, přesáhl <b>249 181</b>. Trh tak existoval <i>de iure</i> dříve než <i>de facto</i>.<sup>[28][29]</sup></p>
+
+            <h4 className="prose-sub">PRE a specifika pražské distribuční sítě</h4>
+            <p><b>Pražská energetika, a.s. (PRE)</b> prošla po roce 1989 zásadní proměnou. Již v průběhu roku 1993 proběhly přípravy na přeměnu státního podniku na akciovou společnost a k <b>1. lednu 1994</b> vznikla privatizací Pražská energetika, a. s. s privatizovaným majetkem oceněným na téměř <b>4,3 miliardy korun</b>. V letech 1995–2000 bylo do modernizace a obnovy distribuční sítě celkem vloženo <b>9,75 miliardy korun</b>, přičemž 64 % těchto investic směřovalo přímo do rozvodu elektřiny. Celkový objem investic poprvé překročil miliardu korun již v roce 1995.<sup>[28][30]</sup></p>
+            <p>Paralelně s technickou obnovou probíhala přeměna na zákaznicky orientovanou firmu: budovala se síť obchodních kanceláří rozmístěných po celé Praze, v roce 1997 bylo otevřeno nové <b>sídlo ředitelství v Praze 10 v ulici Na Hroudě</b> a v roce 2000 spuštěna zákaznická linka, která v prvním roce obsloužila přes <b>80 000 zákazníků</b>. V průběhu celého desetiletí 2000–2010 pak probíhalo budování centrálního dispečinku v Nitranské ulici, zavádění systémů <b>SAP</b> (původně z německého Systeme, Anwendungen, Produkte in der Datenverarbeitung) pro fakturaci a <b>Customer Relationship Management (CRM)</b> a digitalizace kompletní evidence distribuční soustavy v geografickém informačním systému.<sup>[28]</sup></p>
+            <p>V srpnu 2002 zasáhly Prahu <b>katastrofální povodně</b> — největší krize v tehdejší 110leté historii pražské energetiky. V okamžiku kulminace bylo z provozu vyřazeno <b>524 transformačních stanic</b>, bez elektřiny zůstalo přibližně <b>8 000 objektů a 70 000 odběrných míst</b>. Voda poškodila technologické zařízení 212 distribučních trafostanic a přibližně <b>509 km kabelových rozvodů</b>. Za obětavé práce přibližně 450 zaměstnanců se podařilo plnou dodávku elektřiny obnovit k <b>16. září 2002</b> — o 14 dní dříve, než byl veřejně avizovaný termín. Celkové škody byly vyčísleny na <b>558 milionů korun</b>.<sup>[28][30]</sup></p>
+            <p>Po unbundlingu se PRE rozdělila na obchodní a distribuční složku — <b>PREdistribuce, a.s.</b> byla ke dni <b>1. ledna 2006</b> vyčleněna jako samostatná dceřiná společnost, jak vyžadovaly evropské i české předpisy. Zatímco ČEZ v téže době získával majority v pěti distribučních společnostech a E.ON ve dvou, Pražská energetika si zachovala svébytnou pozici pod kontrolou Hlavního města Prahy. PREdistribuce provozuje cca <b>9 500 km kabelového vedení</b> na hladinách 110 kV, 22 kV a 0,4 kV. Unikátní charakteristikou pražské sítě je míra kabelizace dosahující <b>99,8 %</b> na hladině VN, zatímco celostátní průměr se pohybuje kolem 35 %. Hustota zástavby, památková ochrana historického centra a nároky na spolehlivost vylučují vzdušné vedení; kabel je sice dražší na výstavbu a obtížnější při hledání poruch, ale prakticky imunní vůči počasí.<sup>[26][28][30]</sup></p>
+
+            <h4 className="prose-sub">Fyzický vs. obchodní tok a technologická modernizace</h4>
+            <p>Klíčovým konceptem liberalizovaného trhu je rozdíl mezi <b>fyzickým a obchodním tokem</b> elektřiny. Elektřina teče sítí podle <b>Kirchhoffových zákonů</b> — nelze ji směrovat ke konkrétnímu zákazníkovi. Obchodní smlouva ale definuje finanční vztah: zákazník s ostravským obchodníkem dostane elektrony z nejbližší pražské trafostanice. Regulace prostředí trhu probíhá nejprve na základě fyzikálních zákonů (ČEPS), a teprve poté na základě odpovídajících zákonů z oblasti energetiky (ERÚ a OTE). Změna dodavatele proto nevyžaduje zásah do sítě a od roku <b>2006</b> ji lze provést administrativně přes systém OTE, a.s., který zajišťuje centralizovanou registraci účastníků trhu, evidenci obchodních diagramů a zúčtování odchylek.<sup>[26][29]</sup></p>
+            <p>Technologicky toto období přineslo masové zavádění systémů <b>Supervisory Control and Data Acquisition (SCADA)</b> pro řízení sítě v reálném čase, modernizaci rozvoden na <b>plynem izolované provedení (GIS</b>, Gas-Insulated Switchgear) umožňující podzemní instalaci — příkladem je plně podzemní <b>rozvodna Karlín</b> — a sledování spolehlivostních ukazatelů <span className="mono">SAIDI</span> (System Average Interruption Duration Index) a <span className="mono">SAIFI</span> (System Average Interruption Frequency Index). Průměrná délka výpadku na odběrné místo v Praze klesla z přibližně <b>90 minut ročně v polovině 90. let 20. století na méně než 20 minut kolem roku 2010</b>.<sup>[28]</sup></p>
           </div>
 
           <EraSidebar>
             <div className="label" style={{marginBottom:6}}>Epocha IV · v číslech</div>
             <EraStat value="99,8 %" label="Kabelizace VN v Praze" />
             <EraStat value="9 500 km" label="Délka kabelového vedení PRE" color="blue" />
-            <EraStat value="730 000" label="Odběrných míst napájených PRE" />
-            <EraStat value="< 20 min" label="SAIDI · roční výpadek v Praze" color="blue" />
+            <EraStat value="524" label="Trafostanic vyřazeno povodněmi 2002" />
+            <EraStat value="< 20 min" label="SAIDI · roční výpadek v Praze (2010)" color="blue" />
             <EraQuote source="Směrnice 96/92/ES">Vnitřní trh s elektřinou jako evropský projekt.</EraQuote>
             <EraTimeline items={[
+              {year: '1994', text: 'Vznik Pražské energetiky, a.s. (privatizace)'},
               {year: '1996', text: 'První liberalizační směrnice 96/92/ES'},
-              {year: '1999', text: 'Vznik ČEPS, a.s. (provozovatel přenosu)'},
-              {year: '2000', text: 'Energetický zákon č. 458/2000 Sb.'},
-              {year: '2001', text: 'Založen ERÚ'},
-              {year: '2002', text: 'Start liberalizovaného trhu pro velké odběratele'},
+              {year: '1998', text: 'Vznik ČEPS, a.s. (provozovatel přenosu)'},
+              {year: '2000', text: 'Energetický zákon č. 458/2000 Sb. · ERÚ'},
+              {year: '2002', text: 'Liberalizace pro velké odběratele · povodně'},
               {year: '2006', text: 'Volba dodavatele pro všechny domácnosti'},
             ]} />
           </EraSidebar>
         </div>
 
-        <Stage title="Trh po roce 1995">
-          <StepHead step="08 · Fyzický tok ≠ obchodní tok" title="Proto změna dodavatele nevyžaduje nové kabely" />
-          <FlowDiagram />
-        </Stage>
       </div>
     </section>
   );
@@ -1895,12 +2135,18 @@ function City24h() {
   const pvMw = (totalHouseholds * (pvPct / 100) * pvKw) / 1000;
   const evMw = evCount * (simulPct / 100) * 11 / 1000;
 
-  // 24h curves
+  // 24h curves — realistická spotřeba s ranní a večerní špičkou (typický průběh pražské sítě)
   const data = useMemo(() => {
     const arr = [];
     for (let h = 0; h < 24; h++) {
-      const base = 600 + 200 * Math.sin(Math.PI * (h - 6) / 12);
+      // Dvojvrcholová křivka: noční minimum, ranní špička ~8h, mírný útlum přes den,
+      // večerní špička ~19h (nejvyšší), pokles do noci.
+      const morning = 220 * Math.exp(-Math.pow((h - 8.5) / 3.5, 2));
+      const evening = 320 * Math.exp(-Math.pow((h - 19)  / 2.8, 2));
+      const base = 480 + morning + evening;
+      // FVE — produkce sleduje sluneční oblouk (6–19h, peak v poledne)
       const pv = (h >= 6 && h < 19) ? pvMw * Math.sin(Math.PI * (h - 6) / 12) : 0;
+      // EV nabíjení
       let ev = 0;
       if (smartCharge) {
         if (h < 6) ev = evMw / 2;
@@ -1917,9 +2163,19 @@ function City24h() {
   const minY = Math.min(-200, ...data.map(d => d.net - 100));
   const rangeY = maxY - minY;
 
-  const w = 600, hgt = 240;
-  const xFor = h => (h / 23) * w;
+  const w = 600, hgt = 320;
+  const padL = 42; // priestor pre Y-osové popisky
+  const xFor = h => padL + (h / 23) * (w - padL);
   const yFor = v => hgt - ((v - minY) / rangeY) * hgt;
+
+  // Y-axis ticks v MW (rovnomerne rozdelené)
+  const yTicks = (() => {
+    const step = rangeY > 2000 ? 500 : rangeY > 1000 ? 250 : 100;
+    const start = Math.ceil(minY / step) * step;
+    const ticks = [];
+    for (let v = start; v <= maxY; v += step) ticks.push(v);
+    return ticks;
+  })();
 
   // path builders
   const pathBase = data.map((d,i) => `${i===0?'M':'L'}${xFor(d.h)},${yFor(d.base)}`).join(' ');
@@ -1971,35 +2227,46 @@ function City24h() {
           <div className="mono" style={{fontSize:11, color:'var(--amber)'}}>{String(hour).padStart(2,'0')}:00</div>
         </div>
 
-        <svg viewBox={`0 0 ${w} ${hgt+30}`} style={{width:'100%', height:'auto'}} preserveAspectRatio="none">
-          {/* grid */}
-          {[0, 0.25, 0.5, 0.75, 1].map((f,i) => (
-            <line key={i} x1="0" y1={hgt * f} x2={w} y2={hgt * f} stroke="oklch(0.24 0.01 260)" strokeWidth="0.5" />
+        <svg viewBox={`0 0 ${w} ${hgt+34}`} style={{width:'100%', height:'auto'}}>
+          {/* horizontal gridlines + Y-axis MW labels */}
+          {yTicks.map((v, i) => (
+            <g key={i}>
+              <line x1={padL} y1={yFor(v)} x2={w} y2={yFor(v)} stroke="oklch(0.24 0.01 260)" strokeWidth="0.5" />
+              <text x={padL - 6} y={yFor(v) + 3} fontSize="9" fill="oklch(0.55 0.01 260)" fontFamily="JetBrains Mono" textAnchor="end">{v}</text>
+            </g>
           ))}
+          <text x={4} y={12} fontSize="9" fill="oklch(0.55 0.01 260)" fontFamily="JetBrains Mono" letterSpacing="0.1em">MW</text>
+
           {/* hour ticks */}
-          {[0,6,12,18,23].map(h => (
+          {[0,3,6,9,12,15,18,21,23].map(h => (
             <g key={h}>
               <line x1={xFor(h)} y1={hgt} x2={xFor(h)} y2={hgt+4} stroke="oklch(0.35 0.01 260)" strokeWidth="1" />
               <text x={xFor(h)} y={hgt+18} fontSize="10" fill="oklch(0.55 0.01 260)" fontFamily="JetBrains Mono" textAnchor="middle">{h}h</text>
             </g>
           ))}
+          {/* axes baseline */}
+          <line x1={padL} y1={hgt} x2={w} y2={hgt} stroke="oklch(0.35 0.01 260)" strokeWidth="0.8" />
+          <line x1={padL} y1="0" x2={padL} y2={hgt} stroke="oklch(0.35 0.01 260)" strokeWidth="0.8" />
+
           {/* zero line */}
           {zeroY > 0 && zeroY < hgt && (
-            <line x1="0" y1={zeroY} x2={w} y2={zeroY} stroke="oklch(0.45 0.02 260)" strokeWidth="1" strokeDasharray="3 3" />
+            <line x1={padL} y1={zeroY} x2={w} y2={zeroY} stroke="oklch(0.55 0.04 25)" strokeWidth="0.9" strokeDasharray="4 3" />
           )}
 
           {/* base load */}
           <path d={pathBase} stroke="oklch(0.5 0.01 260)" strokeWidth="1.5" fill="none" strokeDasharray="4 3" />
           {/* pv production */}
-          <path d={pathPv + ` L${w},${yFor(0)} L0,${yFor(0)} Z`} fill="color-mix(in oklab, var(--amber) 18%, transparent)" stroke="none" />
+          <path d={pathPv + ` L${xFor(23)},${yFor(0)} L${xFor(0)},${yFor(0)} Z`} fill="color-mix(in oklab, var(--amber) 18%, transparent)" stroke="none" />
           <path d={pathPv} stroke="var(--amber)" strokeWidth="2" fill="none" />
-          {/* net load */}
+          {/* net load — výplň pod křivkou kreslí kachní siluetu */}
+          <path d={pathNet + ` L${xFor(23)},${yFor(Math.max(0, minY))} L${xFor(0)},${yFor(Math.max(0, minY))} Z`}
+                fill="color-mix(in oklab, var(--red) 12%, transparent)" stroke="none" />
           <path d={pathNet} stroke="var(--red)" strokeWidth="2.5" fill="none" />
 
           {/* hour cursor */}
           <line x1={xFor(hour)} y1="0" x2={xFor(hour)} y2={hgt} stroke="var(--ink)" strokeWidth="0.8" opacity="0.4" />
-          <circle cx={xFor(hour)} cy={yFor(cur.net)} r="3.5" fill="var(--red)" />
-          <circle cx={xFor(hour)} cy={yFor(cur.pv)} r="3" fill="var(--amber)" />
+          <circle cx={xFor(hour)} cy={yFor(cur.net)} r="4" fill="var(--red)" />
+          <circle cx={xFor(hour)} cy={yFor(cur.pv)} r="3.5" fill="var(--amber)" />
           <circle cx={xFor(hour)} cy={yFor(cur.base)} r="3" fill="oklch(0.7 0.01 260)" />
         </svg>
 
@@ -2106,51 +2373,57 @@ function Era5() {
       <div className="era-inner">
         <EraHead index="V" eraKey="Epocha V" dates="2010 — současnost"
           title="Sto let bylo jednosměrné. Teď teče tam i zpátky."
-          kicker="Fotovoltaika na střechách. Elektromobil v garáži. Tepelné čerpadlo místo plynu. Jednosměrný strom výroby → spotřeby se mění v kyber-fyzickou síť, kde každý dům může být zdroj." />
-
-        <div className="era-body" style={{marginBottom: 40}}>
-          <div>
-            <figure className="imgframe" style={{margin:0}}>
-              <img src={window.IMGS.FVE} alt="Fotovoltaická elektrárna" />
-              <figcaption>Střešní FVE · prosumer éry</figcaption>
-            </figure>
-          </div>
-
-          <div>
-            <Stage title="Praha 2026 · živá simulace" right={<span className="chip"><span className="chip-dot" />24 h loop</span>}>
-              <StepHead step="09 · Tvoje síť, tvoje pravidla" title="Nastav Prahu a sleduj kachní křivku" />
-              <City24h />
-            </Stage>
-          </div>
-        </div>
+          kicker="Fotovoltaika na střechách. Elektromobil v garáži. Tepelné čerpadlo místo plynu. Jednosměrný strom výroby → spotřeby se mění v kyber-fyzickou síť, kde každý dům může být zdroj."
+          img={{src: window.IMGS.FVE, alt: "Fotovoltaická elektrárna", caption: "Střešní FVE · prosumer éry"}} />
 
         <div className="era-text-wrap" style={{marginBottom:40}}>
           <div className="era-prose">
             <blockquote className="era-pullquote">
               „Po 140 letech se síť vrací k decentralizované výrobě — jen místo obloukovky na Ferdinandově září panely na střechách Vinohrad."
             </blockquote>
-            <p>Po roce 2010 vstupuje pražská síť do fáze kvalitativní proměny, kterou lze bez nadsázky označit za třetí paradigmatický obrat po elektrifikaci a po centralizaci. Tradiční <b>jednosměrný tok</b> (výroba → přenos → distribuce → spotřeba) narušují <b>decentralizované zdroje</b> — v ČR dnes funguje přes <b>150 000 střešních fotovoltaických elektráren</b> (data z roku 2024), z toho v Praze kolem <b>12 000 instalací</b> s celkovým výkonem přes <b>80 MWp</b> a každoročně přibývá řádově 1 500–2 000 nových. Nově vzniká i síť <b>bateriových úložišť (BESS)</b> v domácnostech i komerčních objektech, tepelná čerpadla (v Praze přes 40 000) a infrastruktura pro nabíjení elektromobilů (1 800 veřejných stanic a desítky tisíc privátních wallboxů).<sup>[12][13]</sup></p>
-            <p>Právní rámec otevírá EU <b>Zimní balíček „Čistá energie pro všechny Evropany"</b> (2019, balíček 8 směrnic a nařízení) a novelizovaný <b>energetický zákon č. 458/2000 Sb. ve znění 2022</b>, který poprvé v českém právu definuje <b>zákazníky-výrobce (prosumer)</b>, <b>energetická společenství</b> (Community Energy), <b>sdílení elektřiny</b> a <b>agregaci flexibility</b>. Zavádí se i koncept <b>Smart Meteringu</b> — do roku 2027 bude každé odběrné místo spotřebovávající nad 6 MWh/rok povinně vybaveno průběhovým měřením s patnáctiminutovým vzorkováním, což otevře trh s dynamickými sazbami.<sup>[10][12]</sup></p>
-            <p>Klíčovými projekty PRE jsou strategie <b>Smart Prague 2030</b> (zastřešující program Magistrátu hlavního města, integrující energetiku, dopravu, odpady a digitalizaci) a masivní nasazování <b>chytrých elektroměrů (AMM — Advanced Metering Management)</b>. Rozvodny jsou osazovány automatizací podle normy <b>IEC 61850</b> — jednotného komunikačního standardu pro ochrany, měření a dispečerský sběr dat v digitální substation. Nové <b>digitální ochrany</b> dokáží detekovat poruchu, lokalizovat ji na úrovni desítek metrů a automaticky přeposlat napájení alternativní cestou do několika sekund — místo dřívějších desítek minut ručního přepínání.<sup>[11][13]</sup></p>
-            <p>Novou a nejvíce diskutovanou výzvou je tzv. <b>kachní křivka (duck curve)</b> — pojmenovaná podle typického tvaru denní bilance v energetických soustavách s vysokým podílem střešní fotovoltaiky. V poledne letního dne střešní FVE tlačí přebytky do sítě (zbytková spotřeba z pohledu distribuční soustavy klesá k nule, v některých lokalitách dokonce do záporu — kabel teče „proti toku"), zatímco večer po 19. hodině odchází slunce a zároveň přijíždějí elektromobily z kanceláří do garáží — vzniká extrémně ostrá <b>večerní rampa</b> odhadovaná v české soustavě až na <b>1 200 MW/h</b>. Tradiční uhelné bloky tuto dynamiku nezvládají (najetí z minima trvá hodiny), proto jsou řešením <b>bateriová úložiště (BESS)</b>, <b>plynové elektrárny s rychlou reakcí</b>, <b>smart charging</b> (řízené nabíjení EV podle signálu sítě) a <b>agregátoři flexibility</b> — noví hráči trhu, kteří sbírají stovky malých domácích zdrojů a nabízejí jejich souhrnný výkon jako službu pro ČEPS.<sup>[13]</sup></p>
-            <p>Současná infrastruktura je <b>kyber-fyzický systém</b>, kde fyzické toky řídí digitální vrstva dat a algoritmů. To klade nové nároky na <b>kybernetickou bezpečnost</b> — rozvodna dnes není jen kolekce transformátorů, ale kritická informační infrastruktura ve smyslu <b>NIS2 směrnice</b> (2022/2555) a českého <b>zákona č. 181/2014 Sb. o kybernetické bezpečnosti</b>. PRE provozuje vlastní <b>Security Operations Center (SOC)</b>, pravidelné penetrační testy a oddělenou OT síť (operational technology) od korporátní IT. Útok na distribuční soustavu (např. Ukrajina 2015, 2016) je dnes reálnou geopolitickou hrozbou.<sup>[10][12]</sup></p>
-            <p>K roku 2026 má ČR závazný cíl <b>30 % OZE v hrubé konečné spotřebě</b> (podle aktualizovaného NECP z roku 2023), v Praze se plánuje instalace <b>minimálně 80 MW nových FVE ročně</b> a kompletní <b>roll-out AMM do roku 2027</b>. Historický oblouk se tím symbolicky uzavírá: po 140 letech se síť vrací k <b>decentralizované výrobě</b> — jen místo Křižíkovy obloukovky na Ferdinandově třídě dnes září monokrystalické panely na střechách Vinohrad a Smíchova, místo parního stroje v kotelně Žižkova pulzuje tepelné čerpadlo na Praze 6, a místo uhelného vagónu z Ervěnic se elektrické auto plní ze solárního střídače na Jižním Městě. Síť už není jednosměrná dálnice výkonu — je to kyber-fyzický organismus, který se každou sekundou přeučuje, jak se má chovat.<sup>[11][12]</sup></p>
+            <p>Po roce 2010 prochází celostátní energetická soustava, včetně té na území Prahy, zásadní strukturální proměnou, kterou lze v širším historickém kontextu označit za další zlom po již uskutečněné elektrifikaci a následné centralizaci zdrojů. Dominantním rysem tohoto období je narušení tradičního <b>jednosměrného toku energie</b> vlivem masivní integrace decentralizovaných technologií přímo do městské zástavby. K roku 2024 je na území Prahy v provozu přibližně <b>12 000 fotovoltaických instalací</b> o celkovém instalovaném výkonu přesahujícím <b>80 MWp</b>, přičemž tempo rozvoje vykazuje strmý nárůst s průměrným přírůstkem 1 500 až 2 000 nových systémů ročně. Dynamicky se rozvíjí také infrastruktura pro elektromobilitu, která v současnosti čítá zhruba <b>920 dobíjecích stanic ve vlastnictví PRE</b>. Distribuční síť se tak transformuje v komplexní <b>kyber-fyzický systém</b>, jenž vyžaduje aktivní řízení toků v reálném čase.</p>
+
+            <p>Tato technologická transformace je úzce spjata s legislativním rámcem <b>„Čistá energie pro všechny Evropany"</b> a jeho transpozicí do českého práva prostřednictvím novely energetického zákona <b>(č. 469/2023 Sb.)</b>. Ta etablovala instituty <b>aktivního zákazníka</b> a <b>energetických společenství</b>, což umožňuje sdílení elektřiny v rámci komunit bez nutnosti budování vlastní paralelní infrastruktury. Zároveň byl ukotven přechod na systémy chytrého měření <b>(Automated Meter Management — AMM)</b>, přičemž plošný roll-out těchto elektroměrů u všech odběrných míst s roční spotřebou nad 6 MWh má být v Praze dokončen <b>do roku 2027</b>. To umožní plné využití dynamických tarifů a automatizovanou optimalizaci spotřeby na základě aktuálních cen na velkoobchodním trhu.</p>
+
+            <p>Masivní nasazování intermitentních zdrojů však přináší signifikantní technické výzvy, zejména v podobě tzv. <b>kachní křivky (duck curve)</b>. Během polední špičky letních dnů generují pražské fotovoltaické elektrárny (FVE) přebytky, které v některých lokalitách vedou k <b>reverzním tokům energie</b> do nadřazené soustavy. Naopak večer, po <b>19. hodině</b>, vzniká v důsledku souběhu poklesu solární výroby a nárůstu spotřeby domácností (včetně nabíjení elektromobilů) extrémně ostrá výkonová rampa, dosahující v rámci celé české soustavy hodnot přes <b>1 200 MW/h</b>. K řešení této nerovnováhy jsou využívána <b>bateriová úložiště (Battery Energy Storage System — BESS)</b>, rychlé plynové zdroje a systémy <b>agregace flexibility</b>, které tržně sdružují kapacity malých domácích zdrojů pro potřeby podpůrných služeb.</p>
+
+            <p>Digitální modernizace sítě se opírá o standard Mezinárodní elektrotechnické komise (založené již roku 1906), <b>IEC 61850</b>, umožňující automatizovanou rekonfiguraci sítě při poruchách v řádu sekund. Vzhledem k rostoucí konektivitě se však akcentuje otázka <b>kybernetické bezpečnosti</b> v režimu směrnice <b>Network and Information Systems Directive 2 (NIS2)</b> a <b>zákona č. 181/2014 Sb. (Zákon o kybernetické bezpečnosti)</b>. Provozovatelé pražské sítě proto provozují oddělené <b>Operational Technology (OT)</b> sítě a specializovaná <b>bezpečnostní centra (Security Operations Center — SOC)</b>, aby eliminovali rizika výpadků v důsledku kybernetických hrozeb.</p>
+
+            <p>Z historického hlediska představuje současný vývoj logické uzavření vývojového oblouku k cílům <b>Vnitrostátního plánu v oblasti energetiky a klimatu (National Energy and Climate Plan — NECP 2023)</b>, jenž v Praze předpokládá instalaci minimálně <b>80 MW nových FVE ročně</b> pro dosažení <b>30% podílu obnovitelných zdrojů energie (OZE) do roku 2030</b>. Po více než století budování centralizované soustavy se pražská energetika navrací k decentralizované výrobě v místě spotřeby, podpořené pokročilými digitálními technologiemi.</p>
+
+            <h4 className="prose-sub">Pojmy nové energetiky</h4>
+            <p>Přechod k decentralizované síti přinesl řadu nových konceptů, které dosud český energetický zákon neznal:<sup>[26]</sup></p>
+
+            <table className="prose-table">
+              <caption>Tabulka 4 · Slovník nové energetiky</caption>
+              <thead>
+                <tr><th>Pojem</th><th>Vysvětlení</th></tr>
+              </thead>
+              <tbody>
+                <tr><td><b>Prosumer</b></td><td>Zákazník, který elektřinu zároveň vyrábí a spotřebovává (střešní FVE)</td></tr>
+                <tr><td><b>Energetické společenství</b></td><td>Skupiny domácností nebo firem sdílejících výrobu a spotřebu v rámci lokální komunity</td></tr>
+                <tr><td><b>Agregátor</b></td><td>Nový tržní hráč sdružující stovky malých zdrojů a nabízející jejich flexibilitu jako službu pro ČEPS</td></tr>
+                <tr><td><b>BESS</b></td><td>Battery Energy Storage System — bateriové úložiště pro vyrovnávání výkyvů výroby a spotřeby</td></tr>
+                <tr><td><b>Duck curve</b></td><td>Kachní křivka — typický tvar denní bilance soustav s vysokým podílem FVE: přebytek v poledne, ostrá rampa večer</td></tr>
+                <tr><td><b>AMM</b></td><td>Advanced Metering Management — chytré elektroměry s 15minutovým vzorkováním</td></tr>
+              </tbody>
+            </table>
           </div>
 
           <EraSidebar>
             <div className="label" style={{marginBottom:6}}>Epocha V · v číslech</div>
             <EraStat value="80 MWp" label="Instalovaná FVE v Praze (2024)" color="green" />
             <EraStat value="12 000" label="Střešních FVE v Praze" />
-            <EraStat value="40 000" label="Tepelných čerpadel v Praze" color="blue" />
+            <EraStat value="920" label="Dobíjecích stanic ve vlastnictví PRE" color="blue" />
             <EraStat value="1 200 MW/h" label="Večerní rampa · kachní křivka" color="amber" />
             <EraQuote source="NECP ČR, 2023">30 % OZE v hrubé konečné spotřebě do roku 2030.</EraQuote>
             <EraTimeline items={[
               {year: '2010', text: 'První masivní vlna střešních FVE v ČR'},
-              {year: '2019', text: 'EU Zimní balíček · Clean Energy Package'},
-              {year: '2022', text: 'Novela energetického zákona · prosumer'},
-              {year: '2023', text: 'Aktualizace NECP · cíl 30 % OZE'},
-              {year: '2026', text: 'Smart Prague 2030 · roll-out AMM'},
-              {year: '2027', text: 'Povinné průběhové měření nad 6 MWh/rok'},
+              {year: '2019', text: 'EU balíček „Čistá energie pro všechny Evropany"'},
+              {year: '2023', text: 'Aktualizace NECP · cíl 30 % OZE do 2030'},
+              {year: '2023', text: 'Novela energetického zákona č. 469/2023 Sb. · prosumer'},
+              {year: '2024', text: '12 000 FVE / 80 MWp na území Prahy'},
+              {year: '2027', text: 'Plošný roll-out AMM (odběry nad 6 MWh/rok)'},
             ]} />
           </EraSidebar>
         </div>
@@ -2226,14 +2499,9 @@ function Closing() {
     <section className="closing" data-screen-label="06 Zaver">
       <div style={{maxWidth:1100, margin:'0 auto'}}>
         <div className="label" style={{marginBottom:20}}>Epilog · 140 let později</div>
-        <h2 className="display">Jak rostl hlad Prahy po energii</h2>
-        <p>Od pěti GWh v roce 1890 na čtyři tisíce v roce 2010. A pak — poprvé v historii — spotřeba mírně klesá. Nikoli proto, že by se město zpomalilo. Ale protože žárovky už nejsou wolframové, ledničky jsou efektivní, a čtvrť si kus výroby vyrobí sama.</p>
+        <h2 className="display">Tři snímky stejné metropole</h2>
 
-        <div className="closing-chart">
-          <ConsumptionChart />
-        </div>
-
-        <div style={{display:'grid', gridTemplateColumns:'repeat(3, 1fr)', gap:48, maxWidth:900, margin:'80px auto 0', textAlign:'left', paddingTop:40, borderTop:'1px solid var(--rule)'}}>
+        <div style={{display:'grid', gridTemplateColumns:'repeat(3, 1fr)', gap:48, maxWidth:900, margin:'48px auto 0', textAlign:'left', paddingTop:40, borderTop:'1px solid var(--rule)'}}>
           <div>
             <div className="mono" style={{fontSize:11, color:'var(--amber)', letterSpacing:'0.16em', marginBottom:12}}>1881</div>
             <div style={{fontFamily:'Playfair Display', fontSize:20, lineHeight:1.3, marginBottom:8}}>Jedna ulice, sedm lamp</div>
@@ -2265,19 +2533,42 @@ window.Closing = Closing;
 
 function Sources() {
   const refs = [
-    { n: 1, title: 'František Křižík: Paměti', author: 'Efmertová, M., Savický, N.', year: '2005', pub: 'Národní technické muzeum, Praha', type: 'book' },
-    { n: 2, title: 'Dějiny techniky v českých zemích 1800–1918, svazek III', author: 'Efmertová, M. (ed.)', year: '2013', pub: 'NTM / Scientia', type: 'book' },
-    { n: 3, title: 'Historie elektrizace českých zemí', author: 'Mayer, D., Hanzelka, Z.', year: '2008', pub: 'ČVUT FEL', type: 'book' },
-    { n: 4, title: 'Elektrické podniky hl. města Prahy 1897–1953', author: 'Archiv PRE / PMDP', year: '2017', pub: 'Pražská energetika a.s.', type: 'archive' },
-    { n: 5, title: 'Zákon č. 438/1919 Sb. o státní podpoře při zahájení soustavné elektrisace', author: 'Sbírka zákonů a nařízení', year: '1919', pub: 'Československá republika', type: 'law' },
-    { n: 6, title: 'Přenosová soustava ČR — historie a současnost', author: 'ČEPS, a.s.', year: '2022', pub: 'ceps.cz', type: 'web' },
-    { n: 7, title: 'Energetika v Československu 1945–1989', author: 'Jakubec, I., Jindra, Z.', year: '2010', pub: 'Karolinum, Praha', type: 'book' },
-    { n: 8, title: 'Výroční zpráva ČEZ 2023', author: 'ČEZ, a.s.', year: '2024', pub: 'cez.cz', type: 'report' },
-    { n: 9, title: 'Energetický zákon č. 458/2000 Sb., ve znění pozdějších předpisů', author: 'Sbírka zákonů ČR', year: '2000', pub: 'ERÚ', type: 'law' },
-    { n: 10, title: 'Směrnice EU 96/92/ES, 2003/54/ES, 2019/944 — vnitřní trh s elektřinou', author: 'Úřední věstník EU', year: '1996–2019', pub: 'eur-lex.europa.eu', type: 'law' },
-    { n: 11, title: 'Výroční zpráva Pražská energetika a.s. 2023', author: 'PRE, a.s.', year: '2024', pub: 'pre.cz', type: 'report' },
-    { n: 12, title: 'Vnitrostátní plán ČR v oblasti energetiky a klimatu (NECP)', author: 'Ministerstvo průmyslu a obchodu', year: '2023', pub: 'mpo.gov.cz', type: 'report' },
-    { n: 13, title: 'Roční zpráva o provozu ES ČR 2023', author: 'ERÚ — Energetický regulační úřad', year: '2024', pub: 'eru.cz', type: 'report' },
+    // Zdroje Epochy I (kapitola-1)
+    { n: 1, title: 'Elektrotechnika v českých zemích a v Československu do poloviny 20. století', author: 'Efmertová, Marcela', year: '1999', pub: 'Libri, Praha · ISBN 80-85983-72-X', type: 'book' },
+    { n: 2, title: 'František Křižík', author: 'Kottas, Jiří', year: '1987', pub: 'Horizont, Praha', type: 'book' },
+    { n: 3, title: 'Pražské elektrické dráhy', author: 'Fojtík, Pavel', year: '2003', pub: 'Dopravní podnik hl. m. Prahy', type: 'book' },
+    // Zdroje Epochy II (kapitola-2)
+    { n: 4, title: 'Holešovická elektrárna', author: 'Wikipedie', year: '—', pub: 'cs.wikipedia.org/wiki/Holešovická_elektrárna', type: 'web' },
+    { n: 5, title: 'PREdistribuce (Elektrické podniky hl. m. Prahy)', author: 'Wikipedie', year: '—', pub: 'cs.wikipedia.org/wiki/PREdistribuce', type: 'web' },
+    { n: 6, title: 'Elektrizace Československa', author: 'Wikipedie', year: '—', pub: 'cs.wikipedia.org/wiki/Elektrizace_Československa', type: 'web' },
+    { n: 7, title: 'ČEPS — přenosová soustava ČR', author: 'Wikipedie', year: '—', pub: 'cs.wikipedia.org/wiki/ČEPS', type: 'web' },
+    { n: 8, title: 'Elektrizace Čech, Moravy a Slezska', author: 'Jakubec, I. — Efmertová, M.', year: '2014', pub: 'Libri, Praha', type: 'book' },
+    { n: 9, title: 'Zákon č. 438/1919 Sb. o státní podpoře při zahájení soustavné elektrizace', author: 'Sbírka zákonů a nařízení RČS', year: '1919', pub: 'archiv ASPI / Sbírka zákonů ČR', type: 'law' },
+    { n: 10, title: 'Století české energetiky', author: 'Skupina ČEZ, a.s.', year: '2018', pub: 'cez.cz', type: 'web' },
+    // Zdroje Epochy III (kapitola-3)
+    { n: 11, title: 'Dekret prezidenta republiky č. 100/1945 Sb., o znárodnění dolů a některých průmyslových podniků', author: 'Sbírka zákonů a nařízení RČS', year: '1945', pub: 'Praha', type: 'law' },
+    { n: 12, title: 'Milníky české energetiky', author: 'Skupina ČEZ', year: '—', pub: 'cez.cz', type: 'web' },
+    { n: 13, title: 'Zákon č. 79/1957 Sb., o výrobě, rozvodu a spotřebě elektřiny (elektrizační zákon)', author: 'Sbírka zákonů ČSR', year: '1957', pub: 'zakonyprolidi.cz', type: 'law' },
+    { n: 14, title: 'První republika a období socialismu: zlatá léta pro uhelnou energetiku', author: 'Skupina ČEZ (tisková zpráva)', year: '2018', pub: 'cez.cz', type: 'web' },
+    { n: 15, title: 'Rozvoj energetiky v Československu', author: 'Kubín, Miroslav a kol.', year: '1989', pub: 'SNTL, Praha', type: 'book' },
+    { n: 16, title: 'Vznik a vývoj přenosové soustavy elektrické energie', author: 'TZB-info', year: '2016', pub: 'energetika.tzb-info.cz', type: 'web' },
+    { n: 17, title: 'Historie a předchůdci SÚJB', author: 'Státní úřad pro jadernou bezpečnost', year: '—', pub: 'sujb.gov.cz', type: 'web' },
+    { n: 18, title: 'Historie a současnost Jaderné elektrárny Dukovany', author: 'Skupina ČEZ', year: '—', pub: 'cez.cz', type: 'web' },
+    { n: 19, title: 'Jak se v čase proměňovala role trhu a státu při výrobě a distribuci elektřiny?', author: 'Fakta o klimatu', year: '—', pub: 'faktaoklimatu.cz', type: 'web' },
+    { n: 20, title: 'Elektrárna Mělník', author: 'Skupina ČEZ', year: '—', pub: 'cez.cz', type: 'web' },
+    { n: 21, title: 'Elektrárny Prunéřov a Elektrárny Tušimice', author: 'Skupina ČEZ', year: '—', pub: 'cez.cz', type: 'web' },
+    { n: 22, title: 'Megawatty — Elektrárna Chvaletice', author: 'Město Chvaletice', year: '—', pub: 'chvaletice.cz', type: 'web' },
+    { n: 23, title: 'Elektrárna Dětmarovice', author: 'Skupina ČEZ', year: '—', pub: 'cez.cz', type: 'web' },
+    { n: 24, title: 'Vltavská kaskáda', author: 'Povodí Vltavy, státní podnik', year: '—', pub: 'pvl.cz', type: 'web' },
+    { n: 25, title: 'Vodní elektrárna Dalešice', author: 'Skupina ČEZ', year: '—', pub: 'cez.cz', type: 'web' },
+    // Zdroje Epochy IV (kapitola-4 / čistopis)
+    { n: 26, title: 'Zákon č. 458/2000 Sb., o podmínkách podnikání a o výkonu státní správy v energetických odvětvích (energetický zákon)', author: 'Sbírka zákonů ČR', year: '2000', pub: 'účinnost od 1. 1. 2001', type: 'law' },
+    { n: 27, title: 'Směrnice Evropského parlamentu a Rady 96/92/ES o společných pravidlech pro vnitřní trh s elektřinou', author: 'Úřední věstník EU L 27', year: '1996', pub: 'eur-lex.europa.eu', type: 'law' },
+    { n: 28, title: 'Dopady liberalizace českého energetického trhu', author: 'Jakubová Niedermayerová, Soňa', year: '2014', pub: 'Diplomová práce, Masarykova univerzita Brno', type: 'book' },
+    { n: 29, title: 'Liberalizace v EU a formování vnitřního trhu s elektřinou', author: 'Vítek, L. — Janský, I.', year: '2011', pub: 'Scientia et Societas, VŠE Praha', type: 'book' },
+    { n: 30, title: '120 let jsme energie tohoto města', author: 'Doležálek, J. — Ruta, D.', year: '2016', pub: 'Pražská energetika · ISBN 978-80-270-0671-7', type: 'archive' },
+    { n: 31, title: 'Úvod do liberalizované energetiky — Trh s elektřinou', author: 'Asociace energetických manažerů', year: '2016', pub: 'Praha · ISBN 978-80-260-9212-4', type: 'book' },
+    { n: 32, title: 'Reportáže k povodním a liberalizaci trhu', author: 'ČTK — Česká tisková kancelář', year: '2002–2011', pub: 'ctk.cz', type: 'web' },
   ];
   const typeLabel = {
     book: 'Monografie', law: 'Právní předpis', web: 'Online zdroj',
